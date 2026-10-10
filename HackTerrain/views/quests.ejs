@@ -1,0 +1,77 @@
+<%- include('partials/head', { title: 'Quests', description: 'Quests to build at a hackathon.' }) %>
+<%- include('partials/header', { active: 'quests' }) %>
+
+  <main id="main">
+    <div class="container">
+      <div class="page-title">
+        <h1>Quests</h1>
+        <p>Complete individual and group quests to build hackathon skills and earn items for your world.</p>
+      </div>
+
+      <form class="filters" aria-label="Filter quests">
+        <label>Type
+          <select name="type"><option value="">All</option><option>Individual</option><option>Group</option></select>
+        </label>
+        <label>Skill
+          <select name="skill"><option value="">All</option><option>Product development</option><option>Teamwork</option><option>Hackathon ideas</option></select>
+        </label>
+        <label>Difficulty
+          <select name="difficulty"><option value="">All</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select>
+        </label>
+        <button class="btn" type="submit">Apply filters</button>
+      </form>
+
+      <div class="grid">
+        <article class="card">
+          <h3>Quest title</h3>
+          <p class="meta">Individual or group &bull; Difficulty</p>
+          <p>Short description of the quest.</p>
+          <span class="tag">Skill</span>
+          <span class="tag tag-honey">Reward: world item</span>
+          <a class="btn btn-dark" href="#">Start quest</a>
+        </article>
+        <article class="card">
+          <h3>Quest title</h3>
+          <p class="meta">Individual or group &bull; Difficulty</p>
+          <p>Short description of the quest.</p>
+          <span class="tag">Skill</span>
+          <span class="tag tag-honey">Reward: world item</span>
+          <a class="btn btn-dark" href="#">Start quest</a>
+        </article>
+        <article class="card">
+          <h3>Quest title</h3>
+          <p class="meta">Individual or group &bull; Difficulty</p>
+          <p>Short description of the quest.</p>
+          <span class="tag">Skill</span>
+          <span class="tag tag-honey">Reward: world item</span>
+          <a class="btn btn-dark" href="#">Start quest</a>
+        </article>
+        <article class="card">
+          <h3>Quest title</h3>
+          <p class="meta">Individual or group &bull; Difficulty</p>
+          <p>Short description of the quest.</p>
+          <span class="tag">Skill</span>
+          <span class="tag tag-honey">Reward: world item</span>
+          <a class="btn btn-dark" href="#">Start quest</a>
+        </article>
+        <article class="card">
+          <h3>Quest title</h3>
+          <p class="meta">Individual or group &bull; Difficulty</p>
+          <p>Short description of the quest.</p>
+          <span class="tag">Skill</span>
+          <span class="tag tag-honey">Reward: world item</span>
+          <a class="btn btn-dark" href="#">Start quest</a>
+        </article>
+        <article class="card">
+          <h3>Quest title</h3>
+          <p class="meta">Individual or group &bull; Difficulty</p>
+          <p>Short description of the quest.</p>
+          <span class="tag">Skill</span>
+          <span class="tag tag-honey">Reward: world item</span>
+          <a class="btn btn-dark" href="#">Start quest</a>
+        </article>
+      </div>
+    </div>
+  </main>
+
+<%- include('partials/footer') %>

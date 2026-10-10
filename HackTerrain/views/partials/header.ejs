@@ -1,0 +1,23 @@
+<%
+  const here = locals.active || '';
+  const cur = (key) => (here === key ? ' aria-current="page"' : '');
+%>
+  <header class="site-header">
+    <div class="container">
+      <a class="logo" href="/">HackOrGoHome</a>
+      <nav aria-label="Main">
+        <ul class="nav-list">
+          <li><a href="/quests"<%- cur('quests') %>>Quests</a></li>
+          <li><a href="/hackathons"<%- cur('hackathons') %>>Hackathons</a></li>
+          <li><a href="/teammates"<%- cur('teammates') %>>Team Finder</a></li>
+          <li><a href="/host"<%- cur('host') %>>Launch Your Hackathon</a></li>
+          <% if (locals.me) { %>
+          <li><a href="/profile"<%- cur('profile') %>>My Profile</a></li>
+          <li><a href="/logout">Log out</a></li>
+          <% } else { %>
+          <li><a class="nav-cta" href="/login">Log in</a></li>
+          <% } %>
+        </ul>
+      </nav>
+    </div>
+  </header>

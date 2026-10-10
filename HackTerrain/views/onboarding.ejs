@@ -1,0 +1,90 @@
+<%- include('partials/head', { title: 'Set up your profile', description: 'Tell us a bit about you.' }) %>
+<%- include('partials/header', { active: '' }) %>
+<%
+  const pickedRoles = profile.roles || [];
+%>
+  <main id="main">
+    <div class="container">
+      <div class="page-title">
+        <p class="meta">Step <%= step %> of <%= total %></p>
+        <h1><%= titles[step - 1] %></h1>
+      </div>
+      <div class="step-bar" role="progressbar" aria-valuemin="1" aria-valuemax="<%= total %>" aria-valuenow="<%= step %>" aria-label="Survey progress"><span style="width: <%= Math.round((step / total) * 100) %>%"></span></div>
+
+      <% if (error) { %><p class="form-error" role="alert"><%= error %></p><% } %>
+
+      <form class="form-card<%- step === 4 || step === 5 ? ' form-card-wide' : '' %>" method="post" action="/onboarding/<%= step %>">
+
+        <% if (step === 1) { %>
+        <label class="field">Username
+          <input type="text" name="username" value="<%= profile.username %>" required minlength="3" maxlength="20" autocomplete="username">
+          <span class="hint">3-20 characters: letters, numbers, or underscores.</span>
+        </label>
+        <label class="field">Display name
+          <input type="text" name="display_name" value="<%= profile.display_name %>" maxlength="50">
+        </label>
+        <label class="field">Short bio
+          <textarea name="bio" rows="3" maxlength="200"><%= profile.bio %></textarea>
+          <span class="hint">Up to 200 characters.</span>
+        </label>
+
+        <% } else if (step === 2) { %>
+        <label class="field">School
+          <input type="text" name="school" value="<%= profile.school %>" maxlength="80">
+        </label>
+        <label class="field">Major
+          <input type="text" name="major" value="<%= profile.major %>" maxlength="80">
+        </label>
+        <label class="field">City
+          <input type="text" name="city" value="<%= profile.city %>" maxlength="80" placeholder="e.g. Birmingham, Alabama">
+          <span class="hint">Used to show how far hackathons and teammates are. Others only see a rounded distance.</span>
+        </label>
+
+        <% } else if (step === 3) { %>
+        <p class="form-label">How many hackathons have you done?</p>
+        <div class="choice-list">
+          <% options.experience.forEach((o) => { %>
+          <label class="choice"><input type="radio" name="experience" value="<%= o.id %>"<%- profile.experience === o.id ? ' checked' : '' %>> <span><%= o.label %></span></label>
+          <% }) %>
+        </div>
+        <p class="form-label">What do you want out of it?</p>
+        <div class="choice-list">
+          <% options.goals.forEach((o) => { %>
+          <label class="choice"><input type="radio" name="goal" value="<%= o.id %>"<%- profile.goal === o.id ? ' checked' : '' %>> <span><%= o.label %></span></label>
+          <% }) %>
+        </div>
+        <p class="form-label">What role do you usually take? (pick any)</p>
+        <div class="choice-list">
+          <% options.roles.forEach((o) => { %>
+          <label class="choice"><input type="checkbox" name="roles" value="<%= o.id %>"<%- pickedRoles.includes(o.id) ? ' checked' : '' %>> <span><%= o.label %></span></label>
+          <% }) %>
+        </div>
+
+        <% } else if (step === 4) { %>
+        <%- include('partials/skill-picker', { skillList: options.skills, selected: profile.skills || [], custom: profile.custom_skills || '' }) %>
+
+        <% } else if (step === 5) { %>
+        <p class="hint">Pick up to 3. We'll use these to match you with other people heading there.</p>
+        <%- include('partials/hack-picker', { hackathons: options.hackathons, hasLocation: options.hasLocation, selected: (profile.hackathons || []).map((h) => h.id) }) %>
+
+        <% } else if (step === 6) { %>
+        <label class="choice">
+          <input type="checkbox" name="looking_for_team" value="1"<%- profile.looking_for_team ? ' checked' : '' %>>
+          <span>I'm looking for teammates (show me in the Team Finder)</span>
+        </label>
+        <label class="field">Discord username (optional)
+          <input type="text" name="discord" value="<%= profile.discord %>" maxlength="40" placeholder="username">
+          <span class="hint">Only logged-in members can see it, and only while you're looking for a team.</span>
+        </label>
+        <% } %>
+
+        <div class="form-actions">
+          <% if (step > 1) { %><a class="btn btn-dark" href="/onboarding/<%= step - 1 %>">Back</a><% } %>
+          <button class="btn" type="submit"><%= step === total ? 'Finish' : 'Continue' %></button>
+          <% if (step > 1) { %><button class="btn btn-dark" type="submit" name="skip" value="1" formnovalidate>Skip</button><% } %>
+        </div>
+      </form>
+    </div>
+  </main>
+
+<%- include('partials/footer', { scripts: step === 4 || step === 5 ? ['/js/forms.js'] : [] }) %>

@@ -1,0 +1,70 @@
+<%- include('partials/head', { title: 'Team Finder', description: 'Find teammates for an upcoming hackathon.' }) %>
+<%- include('partials/header', { active: 'teammates' }) %>
+  <main id="main">
+    <div class="container">
+      <div class="page-title">
+        <h1>Team Finder</h1>
+        <p>Find people who are looking for a team. Matches are ranked by shared hackathons, skills, school, and major.</p>
+      </div>
+
+      <% if (locals.me && locals.me.looking_for_team) { %>
+      <p class="notice">You're listed as looking for a team. <a href="/settings/team">Edit your team settings</a></p>
+      <% } else { %>
+      <p class="notice">Other people can't find you yet. <a href="/settings/team">Turn on "looking for a team"</a> to show up here.</p>
+      <% } %>
+
+      <form class="filters" method="get" action="/teammates" aria-label="Filter teammates">
+        <label>Skill
+          <select name="skill">
+            <option value="">Any</option>
+            <% allSkills.forEach((s) => { %><option value="<%= s %>"<%- filters.skill === s ? ' selected' : '' %>><%= s %></option>
+            <% }) %>
+          </select>
+        </label>
+        <% if (hasLocation) { %>
+        <label>Distance
+          <select name="radius">
+            <option value="">Anywhere</option>
+            <% [25, 50, 100, 250, 500].forEach((mi) => { %><option value="<%= mi %>"<%- Number(filters.radius) === mi ? ' selected' : '' %>>Within <%= mi %> miles</option>
+            <% }) %>
+          </select>
+        </label>
+        <% } %>
+        <button class="btn" type="submit">Apply filters</button>
+        <% if (filters.skill || filters.radius) { %><a class="btn btn-dark" href="/teammates">Clear</a><% } %>
+      </form>
+
+      <% if (!hasLocation) { %>
+      <p class="hint">Want to filter by distance? <a href="/settings/team">Add your city</a> to turn it on.</p>
+      <% } %>
+
+      <% if (!matches.length) { %>
+      <p class="empty">Nobody matches yet. Try clearing the filters, or check back as more people join.</p>
+      <% } else { %>
+      <p class="hint">Highlighted skills are ones you share.</p>
+      <div class="grid">
+        <% matches.forEach((m) => { %>
+        <article class="card">
+          <h3><a href="/u/<%= encodeURIComponent(m.username) %>"><%= m.display_name || m.username %></a></h3>
+          <p class="meta">@<%= m.username %><% if (m.distance !== null) { %> &bull; about <%= m.distance %> miles away<% } %></p>
+          <% const where = [m.school, m.major, m.city].filter(Boolean).join(' / '); %>
+          <% if (where) { %><p class="meta"><%= where %></p><% } %>
+          <% if (m.experience) { %><p><%= m.experience %></p><% } %>
+          <% if (m.roles.length) { %><p><strong>Roles:</strong> <%= m.roles.map((r) => r.split(' (')[0]).join(', ') %></p><% } %>
+          <% if (m.sharedHackathons.length) { %><p><strong>Also going to:</strong> <%= m.sharedHackathons.join(', ') %></p><% } %>
+          <% if (m.sameSchool) { %><p class="meta">Same school as you</p><% } %>
+          <% if (m.skills.length) { %>
+          <div class="tag-row">
+            <% m.skills.forEach((s) => { %><span class="tag<%- m.sharedSkills.includes(s) ? ' tag-honey' : '' %>"><%= s %></span><% }) %>
+          </div>
+          <% } %>
+          <% if (m.discord) { %><p><strong>Discord:</strong> <%= m.discord %></p><% } %>
+          <a class="btn btn-dark" href="/u/<%= encodeURIComponent(m.username) %>">View profile</a>
+        </article>
+        <% }) %>
+      </div>
+      <% } %>
+    </div>
+  </main>
+
+<%- include('partials/footer') %>

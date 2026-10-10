@@ -1,0 +1,28 @@
+<%- include('partials/head', { title: 'Dashboard', description: 'Your HackOrGoHome dashboard.' }) %>
+<%- include('partials/header', { active: '' }) %>
+  <main id="main">
+    <div class="container">
+      <div class="page-title">
+        <h1>Welcome back, <%= me.display_name || me.username %></h1>
+        <p>Level <%= stats.level %> &bull; <%= stats.rank %></p>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat"><strong><%= stats.points %></strong><span>Points</span></div>
+        <div class="stat"><strong><%= stats.completed %></strong><span>Quests completed</span></div>
+        <div class="stat"><strong><%= stats.streak %></strong><span>Day streak</span></div>
+        <div class="stat"><strong><%= stats.level %></strong><span>Level</span></div>
+      </div>
+      <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<%= Math.max(0, Math.min(100, stats.progress)) %>" aria-label="Progress to next level"><span style="width: <%= Math.max(0, Math.min(100, stats.progress)) %>%"></span></div>
+      <p class="hint"><%= stats.points %> of <%= stats.nextLevelAt %> points to reach level <%= stats.level + 1 %></p>
+
+      <div class="grid section-tight">
+        <article class="card"><h3>Quests</h3><p>Build your hackathon skills and earn items for your world.</p><a class="btn btn-dark" href="/quests">Open quests</a></article>
+        <article class="card"><h3>Hackathons</h3><p>See what's coming up.</p><a class="btn btn-dark" href="/hackathons">Browse hackathons</a></article>
+        <article class="card"><h3>Team Finder</h3><p>Find people who need a teammate.</p><a class="btn btn-dark" href="/teammates">Find teammates</a></article>
+        <article class="card"><h3>My profile</h3><p>See what others see.</p><a class="btn btn-dark" href="/profile">View profile</a></article>
+      </div>
+    </div>
+  </main>
+
+<%- include('partials/footer') %>
