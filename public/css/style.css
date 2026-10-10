@@ -343,3 +343,6 @@ progress::-moz-progress-bar { background: var(--grass); }
 .sw input:checked + span { outline: 3px solid var(--honey); outline-offset: 1px; box-shadow: 0 0 0 5px var(--ink); }
 .sw-text input:checked + span { background: var(--honey); box-shadow: none; outline: 0; }
 .sw input:focus-visible + span { outline: 3px solid var(--pink-dark); }
+.card-head { display: flex; align-items: center; gap: .75rem; }
+.card-head h3 { flex: 1; }
+.profile-id { flex: 1; min-width: 220px; }

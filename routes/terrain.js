@@ -4,7 +4,7 @@ const T = require("../terrain");
 
 module.exports = function ({ requireLogin, show }) {
   const router = express.Router();
-  const DEV = process.env.TERRAIN_DEV === "true";
+  const DEV = process.env.NODE_ENV !== "production" && process.env.TERRAIN_DEV === "true";
 
   // Your own terrain (full page; the home page also embeds it as a tab)
   router.get("/terrain", requireLogin, (req, res) => {

@@ -1,5 +1,5 @@
 <%
-  var _title = typeof title !== "undefined" ? title : "HackOrGoHome";
+  var _title = typeof title !== "undefined" && title ? title + " | HackOrGoHome" : "HackOrGoHome";
   var _desc = typeof description !== "undefined" ? description : "Find everything you need for a hackathon here! Look up hackathons, build your skills through games, and find a team!";
   var _body = typeof bodyClass !== "undefined" ? bodyClass : "";
   var _active = typeof active !== "undefined" ? active : "";
@@ -27,8 +27,8 @@
       <a class="logo" href="/">HackOrGoHome</a>
       <nav aria-label="Main">
         <ul class="nav-list">
-          <li><a href="/games"<%- cur("games") %>>Quests</a></li>
-          <li><a href="/hackathons"<%- cur("catalog") %>>Hackathons</a></li>
+          <li><a href="/games"<%- cur("quests") %>>Quests</a></li>
+          <li><a href="/hackathons"<%- cur("hackathons") %>>Hackathons</a></li>
           <li><a href="/teammates"<%- cur("teammates") %>>Team Finder</a></li>
           <li><a href="/terrain"<%- cur("terrain") %>>My Terrain</a></li>
           <li><a href="/host"<%- cur("host") %>>Launch Your Hackathon</a></li>

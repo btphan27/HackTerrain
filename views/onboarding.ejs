@@ -1,115 +1,120 @@
-<%- include('partials/header', { title: "Set up your profile | HackOrGoHome", active: "" }) %>
+<%- include('partials/header', { title: 'Set up your profile', description: 'Tell us a bit about you.', active: '' }) %>
+<%
+  const pickedRoles = profile.roles || [];
+%>
   <main id="main">
     <div class="container">
       <div class="page-title">
-        <h1>Set up your profile</h1>
-        <p class="step-label">Step <%= step %> of <%= total %>: <strong><%= titles[step - 1] %></strong></p>
-        <progress value="<%= step %>" max="<%= total %>"></progress>
+        <p class="meta">Step <%= step %> of <%= total %></p>
+        <h1><%= titles[step - 1] %></h1>
       </div>
+      <div class="step-bar" role="progressbar" aria-valuemin="1" aria-valuemax="<%= total %>" aria-valuenow="<%= step %>" aria-label="Survey progress"><span style="width: <%= Math.round((step / total) * 100) %>%"></span></div>
 
-      <form class="form-card" method="POST" action="/onboarding/<%= step %>">
-        <% if (error) { %><p class="error-msg" role="alert"><%= error %></p><% } %>
+      <% if (error) { %><p class="form-error" role="alert"><%= error %></p><% } %>
+
+      <form class="form-card<%- step === 4 || step === 5 ? ' form-card-wide' : '' %>" method="post" action="/onboarding/<%= step %>">
 
         <% if (step === 1) { %>
-          <label class="field">Username <input name="username" value="<%= profile.username %>" required></label>
-          <label class="field">Name <input name="display_name" value="<%= profile.display_name %>"></label>
-          <label class="field">Short bio <textarea name="bio" maxlength="200" rows="3"><%= profile.bio %></textarea></label>
+        <label class="field">Username
+          <input type="text" name="username" value="<%= profile.username %>" required minlength="3" maxlength="20" autocomplete="username">
+          <span class="hint">3-20 characters: letters, numbers, or underscores.</span>
+        </label>
+        <label class="field">Display name
+          <input type="text" name="display_name" value="<%= profile.display_name %>" maxlength="50">
+        </label>
+        <label class="field">Short bio
+          <textarea name="bio" rows="3" maxlength="200"><%= profile.bio %></textarea>
+          <span class="hint">Up to 200 characters.</span>
+        </label>
 
-          <%
-            var AV = PixelAvatar;
-            var cur = AV.parse(profile.avatar) || AV.parse(AV.random());
-            var groups = [
-              { key: "skin", label: "Skin", i: 0, items: AV.SKIN },
-              { key: "hair", label: "Hair colour", i: 1, items: AV.HAIR },
-              { key: "style", label: "Hair style", i: 2, items: AV.STYLES },
-              { key: "shirt", label: "Shirt", i: 3, items: AV.SHIRT },
-              { key: "bg", label: "Background", i: 4, items: AV.BG },
-              { key: "acc", label: "Extras", i: 5, items: AV.ACCS }
-            ];
-          %>
-          <h3>Make your avatar</h3>
-          <div class="avatar-maker" id="avatar-maker">
-            <div class="avatar avatar-art avatar-preview" id="avatar-preview"><%- AV.svg(cur.join("-")) %></div>
-            <div class="avatar-options">
-              <% groups.forEach(function (g) { %>
-                <fieldset class="avatar-group">
-                  <legend><%= g.label %></legend>
-                  <% g.items.forEach(function (it, idx) { %>
-                    <label class="<%= it.charAt && it.charAt(0) === '#' ? 'sw' : 'sw sw-text' %>">
-                      <input type="radio" name="a_<%= g.key %>" value="<%= idx %>" <%= cur[g.i] === idx ? "checked" : "" %>>
-                      <% if (it.charAt(0) === "#") { %><span style="background:<%= it %>" title="<%= g.label %> <%= idx + 1 %>"></span><% } else { %><span><%= it %></span><% } %>
-                    </label>
-                  <% }) %>
-                </fieldset>
-              <% }) %>
-              <button class="btn btn-dark" type="button" id="avatar-random">Surprise me</button>
-            </div>
-          </div>
-        <% } %>
-
-        <% if (step === 2) { %>
-          <label class="field">School <input name="school" value="<%= profile.school %>"></label>
-          <label class="field">Major <input name="major" value="<%= profile.major %>"></label>
-          <label class="field">City <input name="city" placeholder="Atlanta, GA" value="<%= profile.city %>"></label>
-          <p class="hint">Your city is only used to find hackathons and teammates near you.</p>
-        <% } %>
-
-        <% if (step === 3) { %>
-          <h3>How many hackathons have you done?</h3>
-          <div class="checks">
-            <% options.experience.forEach(function (o) { %>
-              <label><input type="radio" name="experience" value="<%= o.id %>" <%= profile.experience === o.id ? "checked" : "" %>> <%= o.label %></label>
+        <h2 class="form-heading">Make your avatar</h2>
+        <%
+          var AV = PixelAvatar;
+          var cur = AV.parse(profile.avatar) || AV.parse(AV.random());
+          var groups = [
+            { key: "skin", label: "Skin", i: 0, items: AV.SKIN },
+            { key: "hair", label: "Hair colour", i: 1, items: AV.HAIR },
+            { key: "style", label: "Hair style", i: 2, items: AV.STYLES },
+            { key: "shirt", label: "Shirt", i: 3, items: AV.SHIRT },
+            { key: "bg", label: "Background", i: 4, items: AV.BG },
+            { key: "acc", label: "Extras", i: 5, items: AV.ACCS }
+          ];
+        %>
+        <div class="avatar-maker" id="avatar-maker">
+          <div class="avatar avatar-art avatar-preview" id="avatar-preview"><%- AV.svg(cur.join("-")) %></div>
+          <div class="avatar-options">
+            <% groups.forEach(function (g) { %>
+              <fieldset class="avatar-group">
+                <legend><%= g.label %></legend>
+                <% g.items.forEach(function (it, idx) { %>
+                  <label class="<%= it.charAt(0) === '#' ? 'sw' : 'sw sw-text' %>">
+                    <input type="radio" name="a_<%= g.key %>" value="<%= idx %>" <%= cur[g.i] === idx ? "checked" : "" %>>
+                    <% if (it.charAt(0) === "#") { %><span style="background:<%= it %>" title="<%= g.label %> <%= idx + 1 %>"></span><% } else { %><span><%= it %></span><% } %>
+                  </label>
+                <% }) %>
+              </fieldset>
             <% }) %>
+            <button class="btn btn-dark" type="button" id="avatar-random">Surprise me</button>
           </div>
-          <h3>What's your main goal?</h3>
-          <div class="checks">
-            <% options.goals.forEach(function (o) { %>
-              <label><input type="radio" name="goal" value="<%= o.id %>" <%= profile.goal === o.id ? "checked" : "" %>> <%= o.label %></label>
-            <% }) %>
-          </div>
-          <h3>What role do you usually play? (pick any)</h3>
-          <div class="checks">
-            <% options.roles.forEach(function (o) { %>
-              <label><input type="checkbox" name="roles" value="<%= o.id %>" <%= profile.roles.includes(o.id) ? "checked" : "" %>> <%= o.label %></label>
-            <% }) %>
-          </div>
+        </div>
+
+        <% } else if (step === 2) { %>
+        <label class="field">School
+          <input type="text" name="school" value="<%= profile.school %>" maxlength="80">
+        </label>
+        <label class="field">Major
+          <input type="text" name="major" value="<%= profile.major %>" maxlength="80">
+        </label>
+        <label class="field">City
+          <input type="text" name="city" value="<%= profile.city %>" maxlength="80" placeholder="e.g. Birmingham, Alabama">
+          <span class="hint">Used to show how far hackathons and teammates are. Others only see a rounded distance.</span>
+        </label>
+
+        <% } else if (step === 3) { %>
+        <p class="form-label">How many hackathons have you done?</p>
+        <div class="choice-list">
+          <% options.experience.forEach((o) => { %>
+          <label class="choice"><input type="radio" name="experience" value="<%= o.id %>"<%- profile.experience === o.id ? ' checked' : '' %>> <span><%= o.label %></span></label>
+          <% }) %>
+        </div>
+        <p class="form-label">What do you want out of it?</p>
+        <div class="choice-list">
+          <% options.goals.forEach((o) => { %>
+          <label class="choice"><input type="radio" name="goal" value="<%= o.id %>"<%- profile.goal === o.id ? ' checked' : '' %>> <span><%= o.label %></span></label>
+          <% }) %>
+        </div>
+        <p class="form-label">What role do you usually take? (pick any)</p>
+        <div class="choice-list">
+          <% options.roles.forEach((o) => { %>
+          <label class="choice"><input type="checkbox" name="roles" value="<%= o.id %>"<%- pickedRoles.includes(o.id) ? ' checked' : '' %>> <span><%= o.label %></span></label>
+          <% }) %>
+        </div>
+
+        <% } else if (step === 4) { %>
+        <%- include('partials/skill-picker', { skillList: options.skills, selected: profile.skills || [], custom: profile.custom_skills || '' }) %>
+
+        <% } else if (step === 5) { %>
+        <p class="hint">Pick up to 3. We'll use these to match you with other people heading there.</p>
+        <%- include('partials/hack-picker', { hackathons: options.hackathons, hasLocation: options.hasLocation, selected: (profile.hackathons || []).map((h) => h.id) }) %>
+
+        <% } else if (step === 6) { %>
+        <label class="choice">
+          <input type="checkbox" name="looking_for_team" value="1"<%- profile.looking_for_team ? ' checked' : '' %>>
+          <span>I'm looking for teammates (show me in the Team Finder)</span>
+        </label>
+        <label class="field">Discord username (optional)
+          <input type="text" name="discord" value="<%= profile.discord %>" maxlength="40" placeholder="username">
+          <span class="hint">Only logged-in members can see it, and only while you're looking for a team.</span>
+        </label>
         <% } %>
 
-        <% if (step === 4) { %>
-          <h3>Pick the skills you have</h3>
-          <div class="checks">
-            <% options.skills.forEach(function (s) { %>
-              <label><input type="checkbox" name="skills" value="<%= s %>" <%= profile.skills.includes(s) ? "checked" : "" %>> <%= s %></label>
-            <% }) %>
-          </div>
-          <h3>Don't see yours? Add more</h3>
-          <label class="field">Other skills, separated by commas
-            <input name="custom_skills" placeholder="e.g. unity, solidity, blender" value="<%= profile.custom_skills %>"></label>
-          <p class="hint">Up to 10. Letters, numbers, and + # . / &amp; ( ) - only.</p>
-        <% } %>
-
-        <% if (step === 5) { %>
-          <h3>Which hackathons are you interested in?</h3>
-          <p class="hint">Pick up to 3 upcoming events. The list comes from MLH's official schedule and updates automatically.</p>
-          <%- include('partials/hackathon-picker', {
-                hackathons: options.hackathons,
-                selected: profile.hackathons.map(function (x) { return x.id; }),
-                hasLocation: options.hasLocation, regions: options.regions, tags: options.tags
-          }) %>
-        <% } %>
-
-        <% if (step === 6) { %>
-          <label class="check"><input type="checkbox" name="looking_for_team" <%= profile.looking_for_team ? "checked" : "" %>> I'm looking for a team</label>
-          <label class="field" style="margin-top:1rem">Discord username <input name="discord" placeholder="username" value="<%= profile.discord %>"></label>
-          <p class="hint">Your Discord is only shown to logged-in users while you're looking for a team.</p>
-        <% } %>
-
-        <div class="btn-row">
+        <div class="form-actions">
           <% if (step > 1) { %><a class="btn btn-dark" href="/onboarding/<%= step - 1 %>">Back</a><% } %>
+          <button class="btn" type="submit"><%= step === total ? 'Finish' : 'Continue' %></button>
           <% if (step > 1) { %><button class="btn btn-dark" type="submit" name="skip" value="1" formnovalidate>Skip</button><% } %>
-          <button class="btn btn-primary" type="submit"><%= step === total ? "Finish" : "Next" %></button>
         </div>
       </form>
     </div>
   </main>
-<%- include('partials/footer', { scripts: step === 1 ? ['/js/avatar.js', '/js/avatar-picker.js'] : [] }) %>
+
+<%- include('partials/footer', { scripts: step === 1 ? ['/js/avatar.js', '/js/avatar-picker.js'] : (step === 4 || step === 5 ? ['/js/forms.js'] : []) }) %>

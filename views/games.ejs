@@ -1,35 +1,53 @@
-<%- include('partials/header', { title: "Quests | HackOrGoHome", description: "Pick a game to build for your next hackathon.", active: "games" }) %>
+<%- include('partials/header', { title: "Quests", description: "Practice hackathon skills with quests and earn pieces for your terrain.", active: "quests" }) %>
   <main id="main">
     <div class="container">
       <div class="page-title">
         <h1>Quests</h1>
-        <p>Pick a game to build for your next hackathon.</p>
+        <p>Practice the skills you need at a hackathon. Finish a quest to earn something for your terrain: nature for easy, animals for medium, buildings for hard.</p>
       </div>
 
-      <form class="filters" aria-label="Filter game ideas">
-        <label>Genre
-          <select name="genre"><option value="">All</option><option>Puzzle</option><option>Arcade</option><option>Strategy</option></select>
+      <% if (!user) { %>
+        <p class="notice"><a href="/login">Log in</a> to generate quests and earn terrain rewards.</p>
+      <% } %>
+
+      <form class="filters" id="quest-form" aria-label="Pick a quest">
+        <label>Topic
+          <select name="topic" id="quest-topic">
+            <% topics.forEach(function (t) { %><option value="<%= t.id %>"><%= t.name %></option><% }) %>
+          </select>
         </label>
         <label>Difficulty
-          <select name="difficulty"><option value="">All</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select>
+          <select name="difficulty" id="quest-difficulty">
+            <option value="easy">Easy (nature reward)</option>
+            <option value="medium">Medium (animal reward)</option>
+            <option value="hard">Hard (building reward)</option>
+          </select>
         </label>
-        <label>Time available
-          <select name="time"><option value="">Any</option><option>24 hours</option><option>48 hours</option></select>
-        </label>
-        <button class="btn" type="submit">Apply filters</button>
+        <button class="btn" type="submit" id="quest-go" <%= user ? "" : "disabled" %>>Get a quest</button>
       </form>
 
-      <div class="grid">
-        <% for (var i = 0; i < 6; i++) { %>
-        <article class="card">
-          <h3>Game idea title</h3>
-          <p class="meta">Difficulty &bull; Time estimate</p>
-          <p>One-line pitch for the game.</p>
-          <span class="tag">Genre</span>
-          <a class="btn btn-dark" href="#">View details</a>
-        </article>
-        <% } %>
-      </div>
+      <p class="error-msg" id="quest-error" role="alert" hidden></p>
+
+      <section class="panel" id="quest-card" hidden aria-live="polite">
+        <h2 id="quest-title"></h2>
+        <p class="meta" id="quest-meta"></p>
+        <p id="quest-desc"></p>
+        <p><strong>What to hand in:</strong> <span id="quest-deliverable"></span></p>
+
+        <label class="field">Your answer
+          <textarea id="quest-answer" rows="6" placeholder="Write your answer here (at least 40 characters)"></textarea>
+        </label>
+        <div class="btn-row">
+          <button class="btn btn-primary" type="button" id="quest-submit">Submit my answer</button>
+          <button class="btn btn-dark" type="button" id="quest-solution">I give up, show the solution</button>
+        </div>
+
+        <div class="notice" id="quest-solution-box" hidden>
+          <strong>Model answer (no reward for this quest):</strong>
+          <p id="quest-solution-text"></p>
+        </div>
+        <div class="notice" id="quest-reward" hidden></div>
+      </section>
     </div>
   </main>
-<%- include('partials/footer') %>
+<%- include('partials/footer', { scripts: ['/js/quests.js'] }) %>

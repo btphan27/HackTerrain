@@ -1,0 +1,11 @@
+<%# Expects: skillList (preset skills), selected (array), custom (string) %>
+<p class="form-label">Pick all that apply</p>
+<div class="skill-grid">
+  <% skillList.forEach((s) => { %>
+  <label class="choice"><input type="checkbox" name="skills" value="<%= s %>"<%- selected.includes(s) ? ' checked' : '' %>> <span><%= s %></span></label>
+  <% }) %>
+</div>
+<label class="field">Anything else?
+  <input type="text" name="custom_skills" value="<%= custom %>" maxlength="400" placeholder="e.g. unity, solidity, blender">
+  <span class="hint">Separate with commas. Up to 10 extra skills.</span>
+</label>
