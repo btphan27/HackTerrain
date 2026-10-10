@@ -1,0 +1,80 @@
+<%
+  var monthLabel = function (m) { return new Date(m + "-01T00:00:00Z").toLocaleString("en-US", { month: "long", year: "numeric", timeZone: "UTC" }); };
+  var pageLink = function (n) { return "/hackathons?" + (qs ? qs + "&" : "") + "page=" + n; };
+-%>
+<%- include('partials/header', { title: "Hackathons | HackOrGoHome", description: "Browse and filter upcoming hackathons.", active: "catalog" }) %>
+  <main id="main">
+    <div class="container">
+      <div class="page-title">
+        <h1>Hackathons</h1>
+        <p>Upcoming events from MLH's official season schedule. Updated automatically.</p>
+      </div>
+
+      <form class="filters" method="GET" action="/hackathons" aria-label="Filter hackathons">
+        <label>Search <input type="search" name="q" placeholder="Name or city" value="<%= filters.q %>"></label>
+        <label>Region
+          <select name="region">
+            <option value="">All</option>
+            <% regions.forEach(function (r) { %><option value="<%= r.id %>" <%= filters.region === r.id ? "selected" : "" %>><%= r.label %></option><% }) %>
+          </select>
+        </label>
+        <label>Format
+          <select name="format">
+            <option value="">All</option>
+            <option value="in-person" <%= filters.format === "in-person" ? "selected" : "" %>>In person</option>
+            <option value="online" <%= filters.format === "online" ? "selected" : "" %>>Online</option>
+            <option value="hybrid" <%= filters.format === "hybrid" ? "selected" : "" %>>Hybrid</option>
+          </select>
+        </label>
+        <label>Month
+          <select name="month">
+            <option value="">Any</option>
+            <% months.forEach(function (m) { %><option value="<%= m %>" <%= filters.month === m ? "selected" : "" %>><%= monthLabel(m) %></option><% }) %>
+          </select>
+        </label>
+        <label>Type
+          <select name="tag">
+            <option value="">All</option>
+            <% tags.forEach(function (x) { %><option value="<%= x.id %>" <%= filters.tag === x.id ? "selected" : "" %>><%= x.label %></option><% }) %>
+          </select>
+        </label>
+        <% if (hasLocation) { %>
+          <label>Distance
+            <select name="radius">
+              <option value="">Any</option>
+              <% [25, 50, 100, 250, 500].forEach(function (r) { %><option value="<%= r %>" <%= String(filters.radius) === String(r) ? "selected" : "" %>>Within <%= r %> miles</option><% }) %>
+            </select>
+          </label>
+        <% } %>
+        <button class="btn" type="submit">Apply filters</button>
+        <a class="btn btn-dark" href="/hackathons">Clear</a>
+      </form>
+      <% if (!hasLocation) { %>
+        <p class="hint">Want to filter by distance? <% if (user) { %><a href="/settings/team">Add your city</a><% } else { %><a href="/login">Log in</a> and add your city<% } %>.</p>
+      <% } %>
+
+      <p class="result-count"><%= total %> of <%= totalActive %> events</p>
+
+      <div class="grid">
+        <% hackathons.forEach(function (h) { %>
+          <article class="card">
+            <h3><%= h.name %></h3>
+            <p class="meta"><%= h.dates %> &bull; <%= h.location || "Online" %><% if (h.distance !== null) { %> &bull; <%= h.distance %> mi away<% } %></p>
+            <p><%= h.tags.length ? h.tags.map(tagLabel).join(", ") : "Official MLH season event." %></p>
+            <% if (formatLabel(h.format)) { %><span class="tag"><%= formatLabel(h.format) %></span><% } %>
+            <a class="btn btn-dark" href="<%= h.url %>" target="_blank" rel="noopener noreferrer">View details</a>
+          </article>
+        <% }) %>
+        <% if (!hackathons.length) { %><p>No hackathons match those filters. <a href="/hackathons">Clear the filters</a>.</p><% } %>
+      </div>
+
+      <% if (pages > 1) { %>
+        <nav aria-label="Pagination" class="pagination">
+          <% if (page > 1) { %><a class="btn btn-dark" href="<%= pageLink(page - 1) %>">Previous</a><% } else { %><span class="btn btn-dark is-disabled" aria-disabled="true">Previous</span><% } %>
+          <span>Page <%= page %> of <%= pages %></span>
+          <% if (page < pages) { %><a class="btn btn-dark" href="<%= pageLink(page + 1) %>">Next</a><% } else { %><span class="btn btn-dark is-disabled" aria-disabled="true">Next</span><% } %>
+        </nav>
+      <% } %>
+    </div>
+  </main>
+<%- include('partials/footer') %>

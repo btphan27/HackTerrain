@@ -1,0 +1,54 @@
+<%- include('partials/header', { title: "Find teammates | HackOrGoHome", description: "Find people to team up with at a hackathon.", active: "" }) %>
+  <main id="main">
+    <div class="container">
+      <div class="page-title">
+        <h1>Find teammates</h1>
+        <p>People who are looking for a team, ranked by what you have in common.</p>
+      </div>
+
+      <form class="filters" method="GET" action="/teammates" aria-label="Filter teammates">
+        <label>Has skill
+          <input type="search" name="skill" list="skill-options" placeholder="e.g. python" value="<%= filters.skill || '' %>">
+          <datalist id="skill-options"><% allSkills.forEach(function (s) { %><option value="<%= s %>"><% }) %></datalist>
+        </label>
+        <% if (hasLocation) { %>
+          <label>Distance
+            <select name="radius">
+              <option value="">Any</option>
+              <% [25, 50, 100, 250, 500].forEach(function (r) { %><option value="<%= r %>" <%= Number(filters.radius) === r ? "selected" : "" %>>Within <%= r %> miles</option><% }) %>
+            </select>
+          </label>
+        <% } %>
+        <button class="btn" type="submit">Apply filters</button>
+        <a class="btn btn-dark" href="/teammates">Clear</a>
+      </form>
+      <% if (!hasLocation) { %><p class="hint"><a href="/settings/team">Add your city</a> to filter by distance.</p><% } %>
+
+      <p class="result-count"><%= matches.length %> <%= matches.length === 1 ? "person" : "people" %></p>
+
+      <div class="grid">
+        <% matches.forEach(function (m) { %>
+          <article class="card">
+            <div class="profile-head">
+              <% if (m.picture) { %><img class="avatar avatar-sm" src="<%= m.picture %>" alt=""><% } else { %><div class="avatar avatar-sm" aria-hidden="true"><%= (m.display_name || m.username).charAt(0).toUpperCase() %></div><% } %>
+              <div>
+                <h3><a href="/u/<%= m.username %>"><%= m.display_name %></a></h3>
+                <p class="meta">@<%= m.username %></p>
+              </div>
+            </div>
+            <% if (m.school || m.major || m.city) { %><p><%= [m.school, m.major, m.city].filter(Boolean).join(" | ") %><% if (m.distance !== null) { %> <span class="meta">(about <%= m.distance %> mi away)</span><% } %></p><% } %>
+            <% if (m.experience || m.roles.length) { %><p class="meta"><%= [m.experience].concat(m.roles).filter(Boolean).join(" | ") %></p><% } %>
+            <% if (m.sharedHackathons.length) { %><p><strong>Both interested in:</strong> <%= m.sharedHackathons.join(", ") %></p><% } %>
+            <div class="tags">
+              <% m.skills.slice(0, 10).forEach(function (s) { %><span class="tag <%= m.sharedSkills.indexOf(s) !== -1 ? 'shared' : '' %>"><%= s %></span><% }) %>
+            </div>
+            <% if (m.sameSchool || m.sameMajor) { %><p class="meta"><%= [m.sameSchool ? "Same school" : "", m.sameMajor ? "Same major" : ""].filter(Boolean).join(" | ") %></p><% } %>
+            <% if (m.discord) { %><p>Discord: <strong><%= m.discord %></strong></p><% } %>
+            <a class="btn btn-dark" href="/u/<%= m.username %>">View profile</a>
+          </article>
+        <% }) %>
+        <% if (!matches.length) { %><p>No one matches yet. Teammates only appear if they tick "I'm looking for a team".</p><% } %>
+      </div>
+    </div>
+  </main>
+<%- include('partials/footer') %>
