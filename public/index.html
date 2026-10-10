@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HackTerrain</title>
+  <meta name="description" content="Find everything you need for a hackathon here! Look up hackathons, build your skills through games, and find a team!">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="home">
+
+  <!-- HEADER: logo left, tabs right -->
+  <header class="site-header">
+    <div class="container">
+      <a class="logo" href="index.html">HackTerrain</a>
+      <nav aria-label="Main">
+        <ul class="nav-list">
+          <li><a href="games.html">Games</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="catalog.html">Hack Catalog</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- HERO -->
+    <section class="hero">
+      <nav class="social-rail" aria-label="Social links">
+        <a href="#">Discord</a>
+        <a href="#">GitHub</a>
+        <a href="#">Instagram</a>
+      </nav>
+
+      <div class="cloud cloud-1" aria-hidden="true"></div>
+      <div class="cloud cloud-2" aria-hidden="true"></div>
+      <div class="cloud cloud-3" aria-hidden="true"></div>
+
+      <div class="container">
+        <div class="hero-content">
+          <h1>Find your next hackathon</h1>
+          <p>Browse upcoming events, pick a game to build, and get ready to ship.</p>
+          <div class="hero-actions">
+            <a class="btn" href="catalog.html">Browse Hack Catalog</a>
+            <a class="btn" href="games.html">See Games</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ground" aria-hidden="true"></div>
+    </section>
+
+    <!-- UPCOMING HACKATHONS (dark block) -->
+    <section class="section section-dark">
+      <div class="container">
+        <h2 class="section-title">Upcoming hackathons</h2>
+        <div class="grid">
+          <article class="card">
+            <h3>Hackathon name</h3>
+            <p class="meta">Date &bull; Location</p>
+            <p>Short description of the event.</p>
+            <span class="tag">Online</span>
+            <a class="btn btn-dark" href="#">View details</a>
+          </article>
+          <article class="card">
+            <h3>Hackathon name</h3>
+            <p class="meta">Date &bull; Location</p>
+            <p>Short description of the event.</p>
+            <span class="tag">In person</span>
+            <a class="btn btn-dark" href="#">View details</a>
+          </article>
+          <article class="card">
+            <h3>Hackathon name</h3>
+            <p class="meta">Date &bull; Location</p>
+            <p>Short description of the event.</p>
+            <span class="tag">Hybrid</span>
+            <a class="btn btn-dark" href="#">View details</a>
+          </article>
+        </div>
+        <div class="section-center">
+          <a class="btn" href="catalog.html">View full Hack Catalog</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- GAMES -->
+    <section class="section section-light">
+      <div class="container">
+        <h2 class="section-title">Games to build</h2>
+        <div class="grid">
+          <article class="card">
+            <h3>Game idea title</h3>
+            <p class="meta">Difficulty &bull; Time estimate</p>
+            <p>One-line pitch for the game.</p>
+            <span class="tag">Puzzle</span>
+            <a class="btn btn-dark" href="#">View idea</a>
+          </article>
+          <article class="card">
+            <h3>Game idea title</h3>
+            <p class="meta">Difficulty &bull; Time estimate</p>
+            <p>One-line pitch for the game.</p>
+            <span class="tag">Arcade</span>
+            <a class="btn btn-dark" href="#">View idea</a>
+          </article>
+          <article class="card">
+            <h3>Game idea title</h3>
+            <p class="meta">Difficulty &bull; Time estimate</p>
+            <p>One-line pitch for the game.</p>
+            <span class="tag">Strategy</span>
+            <a class="btn btn-dark" href="#">View idea</a>
+          </article>
+        </div>
+        <div class="section-center">
+          <a class="btn btn-dark" href="games.html">See all Games</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT TEASER -->
+    <section class="section">
+      <div class="container about-teaser">
+        <div class="image-placeholder" role="img" aria-label="Image placeholder">Image</div>
+        <div>
+          <h2 class="section-title">About HackTerrain</h2>
+          <p>A short paragraph about what HackTerrain is and who it's for.</p>
+          <a class="btn btn-dark" href="about.html">Read more</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <p>&copy; 2026 HackTerrain</p>
+      <nav aria-label="Footer">
+        <ul class="nav-list">
+          <li><a href="games.html">Games</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="catalog.html">Hack Catalog</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
