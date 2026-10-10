@@ -1,0 +1,48 @@
+<%- include('partials/head', { title: 'Launch Your Hackathon', description: 'Create a landing page for your hackathon.' }) %>
+<%- include('partials/header', { active: 'host' }) %>
+
+  <main id="main">
+    <div class="container">
+      <div class="page-title">
+        <h1>Launch Your Hackathon</h1>
+        <p>Create a landing page for your event with everything attendees need.</p>
+      </div>
+
+      <form aria-label="Hackathon landing page form">
+        <fieldset>
+          <legend>Event details</legend>
+          <p><label>Hackathon name<br><input type="text" name="event-name"></label></p>
+          <p><label>Date<br><input type="date" name="event-date"></label></p>
+          <p><label>Location or link<br><input type="text" name="event-location"></label></p>
+          <p><label>Description<br><textarea name="event-description" rows="4" cols="40"></textarea></label></p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Schedule</legend>
+          <p><label>Time<br><input type="time" name="schedule-time-1"></label></p>
+          <p><label>Activity<br><input type="text" name="schedule-activity-1"></label></p>
+          <button class="btn" type="button">Add schedule item</button>
+        </fieldset>
+
+        <fieldset>
+          <legend>Quests and prizes</legend>
+          <p><label>Quest or prize<br><input type="text" name="quest-1"></label></p>
+          <button class="btn" type="button">Add another</button>
+        </fieldset>
+
+        <fieldset>
+          <legend>Registration</legend>
+          <p><label>Registration link<br><input type="url" name="registration-url"></label></p>
+        </fieldset>
+
+        <p><button class="btn" type="submit">Create landing page</button></p>
+      </form>
+
+      <section class="section" aria-labelledby="preview-heading">
+        <h2 id="preview-heading" class="section-title">Preview</h2>
+        <div class="image-placeholder" role="img" aria-label="Landing page preview placeholder">Landing page preview</div>
+      </section>
+    </div>
+  </main>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,26 @@
+<%# Expects: hackathons (list), selected (array of ids), hasLocation %>
+<div class="hack-picker" data-max-checks="3" data-filter-scope>
+  <label class="field">Search events
+    <input type="search" data-filter-input placeholder="Name or place" autocomplete="off">
+  </label>
+  <p class="hint"><span data-count>0</span> of 3 picked</p>
+  <p class="form-error" data-limit-note hidden role="alert">You can pick at most 3 hackathons.</p>
+  <% if (!hackathons.length) { %>
+    <p class="empty">No upcoming hackathons are loaded yet. You can add these later in your team settings.</p>
+  <% } else { %>
+  <ul class="pick-list">
+    <% hackathons.forEach((h) => { %>
+    <li data-filter-item data-text="<%= (h.name + ' ' + (h.location || '')).toLowerCase() %>">
+      <label class="pick">
+        <input type="checkbox" name="hackathons" value="<%= h.id %>"<%- locals.selected && selected.includes(h.id) ? ' checked' : '' %>>
+        <span>
+          <strong><%= h.name %></strong><br>
+          <small><%= h.dates || 'Dates TBA' %> &bull; <%= h.location || 'Online' %><% if (h.distance !== null && h.distance !== undefined) { %> &bull; <%= h.distance %> mi away<% } %></small>
+        </span>
+      </label>
+    </li>
+    <% }) %>
+  </ul>
+  <% } %>
+  <% if (!locals.hasLocation) { %><p class="hint">Add your city to see how far each event is from you.</p><% } %>
+</div>

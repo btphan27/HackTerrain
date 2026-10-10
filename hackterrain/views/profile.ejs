@@ -1,0 +1,119 @@
+<%- include('partials/head', { title: profile.display_name || profile.username, description: 'A HackOrGoHome profile.' }) %>
+<%- include('partials/header', { active: isOwner ? 'profile' : '' }) %>
+<%
+  const name = profile.display_name || profile.username;
+  const pct = Math.max(0, Math.min(100, stats.progress));
+  const about = [
+    ['School', profile.school],
+    ['Major', profile.major],
+    ['City', profile.city],
+    ['Experience', profile.experience],
+    ['Goal', profile.goal],
+    ['Roles', (profile.roles || []).map((r) => r.split(' (')[0]).join(', ')],
+  ].filter((row) => row[1]);
+  const safeUrl = (u) => (u && /^https?:\/\//i.test(u) ? u : '');
+%>
+  <main id="main">
+    <div class="container">
+
+      <section class="profile-head">
+        <% if (profile.picture) { %>
+        <img class="avatar" src="<%= profile.picture %>" alt="" referrerpolicy="no-referrer">
+        <% } else { %>
+        <div class="avatar" aria-hidden="true"><%= name.charAt(0).toUpperCase() %></div>
+        <% } %>
+        <div class="profile-id">
+          <h1><%= name %></h1>
+          <p class="meta">@<%= profile.username %> &bull; Joined <%= (profile.created_at || '').slice(0, 10) %></p>
+          <% if (profile.bio) { %><p><%= profile.bio %></p><% } %>
+          <div class="tag-row">
+            <span class="tag tag-honey">Level <%= stats.level %> &bull; <%= stats.rank %></span>
+            <% if (profile.looking_for_team) { %><span class="tag">Looking for a team</span><% } %>
+          </div>
+          <% if (isOwner) { %>
+          <div class="form-actions">
+            <a class="btn" href="/settings">Edit profile</a>
+            <a class="btn btn-dark" href="/settings/team">Team settings</a>
+            <a class="btn btn-dark" href="/onboarding/1">Retake survey</a>
+            <a class="btn btn-dark" href="/dashboard">Dashboard</a>
+          </div>
+          <% } %>
+        </div>
+      </section>
+
+      <div class="stat-grid">
+        <div class="stat"><strong><%= stats.points %></strong><span>Points</span></div>
+        <div class="stat"><strong><%= stats.completed %></strong><span>Quests completed</span></div>
+        <div class="stat"><strong><%= stats.streak %></strong><span>Day streak</span></div>
+        <div class="stat"><strong><%= badges.length %></strong><span>Badges</span></div>
+      </div>
+      <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<%= pct %>" aria-label="Progress to next level"><span style="width: <%= pct %>%"></span></div>
+      <p class="hint"><%= stats.points %> of <%= stats.nextLevelAt %> points to reach level <%= stats.level + 1 %></p>
+
+      <div class="profile-grid">
+
+        <section class="panel">
+          <h2>About</h2>
+          <% if (about.length) { %>
+          <dl class="kv">
+            <% about.forEach((row) => { %><dt><%= row[0] %></dt><dd><%= row[1] %></dd>
+            <% }) %>
+          </dl>
+          <% } else { %><p class="hint">Nothing here yet.</p><% } %>
+          <% if (profile.discord) { %>
+          <p><strong>Discord:</strong> <%= profile.discord %></p>
+          <% } else if (!locals.me && profile.looking_for_team) { %>
+          <p class="hint"><a href="/login">Log in</a> to see their Discord.</p>
+          <% } %>
+        </section>
+
+        <section class="panel">
+          <h2>Skills</h2>
+          <% if (skills.length) { %>
+          <div class="tag-row">
+            <% skills.forEach((s) => { %><span class="tag"><%= s %></span><% }) %>
+          </div>
+          <% } else { %><p class="hint">No skills listed yet.</p><% } %>
+        </section>
+
+        <section class="panel">
+          <h2>Hackathons</h2>
+          <% if (hackathons.length) { %>
+          <ul class="plain-list">
+            <% hackathons.forEach((h) => { %>
+            <li>
+              <% if (safeUrl(h.url)) { %><a href="<%= safeUrl(h.url) %>" target="_blank" rel="noopener noreferrer"><strong><%= h.name %></strong></a><% } else { %><strong><%= h.name %></strong><% } %>
+              <br><small><%= h.dates %></small>
+            </li>
+            <% }) %>
+          </ul>
+          <% } else { %><p class="hint">No hackathons picked yet.</p><% } %>
+        </section>
+
+        <section class="panel">
+          <h2>Badges</h2>
+          <% if (badges.length) { %>
+          <ul class="plain-list">
+            <% badges.forEach((b) => { %>
+            <li><span class="badge"><%= b.name %></span> <small><%= b.description %></small></li>
+            <% }) %>
+          </ul>
+          <% } else { %><p class="hint">No badges earned yet.</p><% } %>
+        </section>
+
+        <section class="panel panel-wide">
+          <h2>Recent activity</h2>
+          <% if (recent.length) { %>
+          <ul class="plain-list">
+            <% recent.forEach((a) => { %>
+            <li><strong>+<%= a.points %></strong> <%= a.reason %> <small>&bull; <%= (a.created_at || '').slice(0, 10) %></small></li>
+            <% }) %>
+          </ul>
+          <% } else { %><p class="hint">No activity yet.</p><% } %>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+<%- include('partials/footer') %>
