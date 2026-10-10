@@ -1,6 +1,6 @@
 const express = require("express");
-const { db, award, giveBadge } = require("../db.js");
-const t = require("../teamdata.js");
+const { db, award, giveBadge } = require("../db");
+const t = require("../teamdata");
 const Avatar = require("../public/js/avatar.js");
 
 const TITLES = [

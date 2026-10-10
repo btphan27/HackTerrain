@@ -346,3 +346,5 @@ progress::-moz-progress-bar { background: var(--grass); }
 .card-head { display: flex; align-items: center; gap: .75rem; }
 .card-head h3 { flex: 1; }
 .profile-id { flex: 1; min-width: 220px; }
+.hack-filters { margin-bottom: 1rem; }
+.hack-picker .pick-list li[hidden] { display: none; }

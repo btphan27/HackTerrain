@@ -95,7 +95,7 @@
 
         <% } else if (step === 5) { %>
         <p class="hint">Pick up to 3. We'll use these to match you with other people heading there.</p>
-        <%- include('partials/hack-picker', { hackathons: options.hackathons, hasLocation: options.hasLocation, selected: (profile.hackathons || []).map((h) => h.id) }) %>
+        <%- include('partials/hack-picker', { hackathons: options.hackathons, hasLocation: options.hasLocation, regions: options.regions, tags: options.tags, selected: (profile.hackathons || []).map((h) => h.id) }) %>
 
         <% } else if (step === 6) { %>
         <label class="choice">

@@ -25,7 +25,7 @@
         <%- include('partials/skill-picker', { skillList: allSkills, selected: profile.skills || [], custom: profile.custom_skills || '' }) %>
 
         <h2 class="form-heading">Hackathons you're interested in</h2>
-        <%- include('partials/hack-picker', { selected: (profile.hackathons || []).map((h) => h.id) }) %>
+        <%- include('partials/hack-picker', { hackathons: hackathons, hasLocation: hasLocation, regions: regions, tags: tags, selected: (profile.hackathons || []).map((h) => h.id) }) %>
 
         <h2 class="form-heading">Teammates</h2>
         <label class="choice">

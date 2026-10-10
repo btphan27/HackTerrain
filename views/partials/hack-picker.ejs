@@ -1,26 +1,87 @@
-<%# Expects: hackathons (list), selected (array of ids), hasLocation %>
-<div class="hack-picker" data-max-checks="3" data-filter-scope>
-  <label class="field">Search events
-    <input type="search" data-filter-input placeholder="Name or place" autocomplete="off">
-  </label>
-  <p class="hint"><span data-count>0</span> of 3 picked</p>
+<%# Expects: hackathons (list), selected (array of ids), hasLocation, regions, tags.
+    The filters work in the browser, so ticked boxes are never lost. The filter controls have no "name", so they are not submitted. %>
+<%
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const monthLabel = (m) => MONTHS[Number(m.slice(5, 7)) - 1] + ' ' + m.slice(0, 4);
+  const FORMATS = { 'in-person': 'In person', online: 'Online', hybrid: 'Hybrid' };
+  const monthList = [];
+  hackathons.forEach((h) => { if (h.month && !monthList.includes(h.month)) monthList.push(h.month); });
+  const regionList = locals.regions || [];
+  const tagList = locals.tags || [];
+  const tagName = (id) => (tagList.find((x) => x.id === id) || {}).label || id;
+%>
+<div class="hack-picker" data-max-checks="3" data-hack-picker>
+  <div class="filters hack-filters" aria-label="Filter hackathons">
+    <label>Search
+      <input type="search" data-f="q" placeholder="Name or place" autocomplete="off">
+    </label>
+    <label>Region
+      <select data-f="region">
+        <option value="">All</option>
+        <% regionList.forEach((r) => { %><option value="<%= r.id %>"><%= r.label %></option>
+        <% }) %>
+      </select>
+    </label>
+    <label>Format
+      <select data-f="format">
+        <option value="">All</option>
+        <% Object.keys(FORMATS).forEach((f) => { %><option value="<%= f %>"><%= FORMATS[f] %></option>
+        <% }) %>
+      </select>
+    </label>
+    <label>Month
+      <select data-f="month">
+        <option value="">Any</option>
+        <% monthList.forEach((m) => { %><option value="<%= m %>"><%= monthLabel(m) %></option>
+        <% }) %>
+      </select>
+    </label>
+    <label>Theme
+      <select data-f="tag">
+        <option value="">All</option>
+        <% tagList.forEach((x) => { %><option value="<%= x.id %>"><%= x.label %></option>
+        <% }) %>
+      </select>
+    </label>
+    <% if (locals.hasLocation) { %>
+    <label>Distance
+      <select data-f="radius">
+        <option value="">Anywhere</option>
+        <% [25, 50, 100, 250, 500].forEach((mi) => { %><option value="<%= mi %>">Within <%= mi %> miles</option>
+        <% }) %>
+      </select>
+    </label>
+    <% } %>
+    <button class="btn btn-dark" type="button" data-f-clear>Clear</button>
+  </div>
+
+  <p class="hint"><span data-shown></span> shown &bull; <strong><span data-count>0</span> of 3 picked</strong></p>
   <p class="form-error" data-limit-note hidden role="alert">You can pick at most 3 hackathons.</p>
+  <p class="empty" data-none hidden>No hackathons match those filters. Try clearing some.</p>
+
   <% if (!hackathons.length) { %>
     <p class="empty">No upcoming hackathons are loaded yet. You can add these later in your team settings.</p>
   <% } else { %>
   <ul class="pick-list">
     <% hackathons.forEach((h) => { %>
-    <li data-filter-item data-text="<%= (h.name + ' ' + (h.location || '')).toLowerCase() %>">
+    <li data-item
+        data-name="<%= ((h.name || '') + ' ' + (h.location || '')).toLowerCase() %>"
+        data-region="<%= h.region || '' %>"
+        data-format="<%= h.format || '' %>"
+        data-month="<%= h.month || '' %>"
+        data-tags="<%= (h.tags || []).join(',') %>"
+        data-distance="<%= h.distance === null || h.distance === undefined ? '' : h.distance %>">
       <label class="pick">
         <input type="checkbox" name="hackathons" value="<%= h.id %>"<%- locals.selected && selected.includes(h.id) ? ' checked' : '' %>>
         <span>
           <strong><%= h.name %></strong><br>
-          <small><%= h.dates || 'Dates TBA' %> &bull; <%= h.location || 'Online' %><% if (h.distance !== null && h.distance !== undefined) { %> &bull; <%= h.distance %> mi away<% } %></small>
+          <small><%= h.dates || 'Dates TBA' %> &bull; <%= h.location || 'Online' %><% if (h.format) { %> &bull; <%= FORMATS[h.format] || h.format %><% } %><% if (h.distance !== null && h.distance !== undefined) { %> &bull; <%= h.distance %> mi away<% } %></small>
+          <% if ((h.tags || []).length) { %><br><small><%= h.tags.map(tagName).join(', ') %></small><% } %>
         </span>
       </label>
     </li>
     <% }) %>
   </ul>
   <% } %>
-  <% if (!locals.hasLocation) { %><p class="hint">Add your city to see how far each event is from you.</p><% } %>
+  <% if (!locals.hasLocation) { %><p class="hint">Add your city (step 2) to filter by distance from you.</p><% } %>
 </div>

@@ -19,7 +19,7 @@ const path = require("path");
 const express = require("express");
 const { auth, requiresAuth } = require("express-openid-connect");
 const { getOrCreateUser } = require("./db");
-const teamdata = require("./teamdata.js");
+const teamdata = require("./teamdata");
 const Avatar = require("./public/js/avatar.js");
 
 const app = express();
@@ -117,7 +117,7 @@ function show(res, view, data = {}) {
 app.get("/", (req, res) => show(res, "index", { upcoming: teamdata.listHackathons().slice(0, 4) }));
 
 // Pages from the design (static content for now)
-app.get("/games", (req, res) => show(res, "games", { topics: require("./services/challenges.js").TOPICS.map(({ id, name }) => ({ id, name })) }));
+app.get("/games", (req, res) => show(res, "games", { topics: require("./services/challenges").TOPICS.map(({ id, name }) => ({ id, name })) }));
 app.get("/quests", (req, res) => res.redirect("/games")); // the new design calls games "quests"
 app.get("/host", (req, res) => show(res, "host"));
 app.get("/dashboard", requireLogin, (req, res) => show(res, "dashboard", { stats: require("./db").getStats(req.profile.sub) }));
@@ -126,11 +126,11 @@ app.get("/info", (req, res) => show(res, "info"));
 app.get("/catalog", (req, res) => res.redirect("/hackathons")); // the design calls it the catalog
 app.get("/api/me", requireLogin, (req, res) => res.json(req.oidc.user));
 
-app.use(require("./routes/onboarding.js")({ requireLogin, show }));
-app.use(require("./routes/profile.js")({ requireLogin, show }));
-app.use(require("./routes/teams.js")({ requireLogin, show }));
-app.use(require("./routes/terrain.js")({ requireLogin, show }));
-app.use(require("./routes/challenges.js")({ requireLogin }));
+app.use(require("./routes/onboarding")({ requireLogin, show }));
+app.use(require("./routes/profile")({ requireLogin, show }));
+app.use(require("./routes/teams")({ requireLogin, show }));
+app.use(require("./routes/terrain")({ requireLogin, show }));
+app.use(require("./routes/challenges")({ requireLogin }));
 require("./hackathons").startSync();
 
 app.listen(PORT, () => console.log(`Running on port ${PORT}` + (PRODUCTION ? "" : ` (http://localhost:${PORT})`)));
