@@ -16,6 +16,7 @@ addCol("onboarded", "INTEGER DEFAULT 0");
 addCol("onboarding_step", "INTEGER DEFAULT 1");
 addCol("experience", "TEXT DEFAULT ''");
 addCol("goal", "TEXT DEFAULT ''");
+addCol("avatar", "TEXT DEFAULT ''"); // pixel avatar code, see public/js/avatar.js
 addCol("roles", "TEXT DEFAULT ''"); // comma-separated role ids
 
 db.exec(`
@@ -268,6 +269,7 @@ function findTeammates(meSub, { radius, skill } = {}) {
       username: p.username,
       display_name: p.display_name,
       picture: p.picture,
+      avatar: p.avatar,
       school: p.school,
       major: p.major,
       city: p.city,

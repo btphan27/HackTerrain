@@ -7,38 +7,38 @@
     return new Date(m + "-01T00:00:00Z").toLocaleString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
   }
 %>
-<div id="hk-filters">
-  <input type="search" id="hk-q" placeholder="Search by name or city">
-  <select id="hk-region">
+<div id="hk-filters" class="filters">
+  <label>Search <input type="search" id="hk-q" placeholder="Name or city"></label>
+  <label>Region <select id="hk-region">
     <option value="">All regions</option>
     <% regions.forEach(function (r) { %><option value="<%= r.id %>"><%= r.label %></option><% }) %>
-  </select>
-  <select id="hk-format">
+  </select></label>
+  <label>Format <select id="hk-format">
     <option value="">Any format</option>
     <option value="in-person">In person</option>
     <option value="online">Online</option>
     <option value="hybrid">Hybrid</option>
-  </select>
-  <select id="hk-month">
+  </select></label>
+  <label>Month <select id="hk-month">
     <option value="">Any month</option>
     <% months.forEach(function (m) { %><option value="<%= m %>"><%= monthLabel(m) %></option><% }) %>
-  </select>
-  <select id="hk-tag">
+  </select></label>
+  <label>Type <select id="hk-tag">
     <option value="">All types</option>
     <% tags.forEach(function (x) { %><option value="<%= x.id %>"><%= x.label %></option><% }) %>
-  </select>
+  </select></label>
   <% if (hasLocation) { %>
-    <select id="hk-radius">
+    <label>Distance <select id="hk-radius">
       <option value="">Any distance</option>
       <option value="50">Within 50 miles of me</option>
       <option value="100">Within 100 miles</option>
       <option value="250">Within 250 miles</option>
       <option value="500">Within 500 miles</option>
-    </select>
+    </select></label>
   <% } else { %>
-    <small>Add your city in step 2 to filter by distance.</small>
+    <small class="hint">Add your city to filter by distance.</small>
   <% } %>
-  <span id="hk-count"></span> <small id="hk-limit"></small>
+  <span id="hk-count" class="count"></span> <small id="hk-limit" class="count"></small>
 </div>
 
 <div id="hk-list">

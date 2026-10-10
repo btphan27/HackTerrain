@@ -1,6 +1,7 @@
 const express = require("express");
-const { db, award, giveBadge } = require("../db");
-const t = require("../teamdata");
+const { db, award, giveBadge } = require("../db.js");
+const t = require("../teamdata.js");
+const Avatar = require("../public/js/avatar.js");
 
 const TITLES = [
   "About you",
@@ -24,13 +25,17 @@ const handlers = {
     const username = (req.body.username || "").trim().toLowerCase();
     const display_name = clean(req.body.display_name, 50);
     const bio = clean(req.body.bio, 200);
-    const draft = { username, display_name, bio };
+    const avatar = Avatar.fromChoices({
+      skin: req.body.a_skin, hair: req.body.a_hair, style: req.body.a_style,
+      shirt: req.body.a_shirt, bg: req.body.a_bg, acc: req.body.a_acc,
+    });
+    const draft = { username, display_name, bio, avatar };
     if (!/^[a-z0-9_]{3,20}$/.test(username)) {
       return { draft, error: "Username must be 3-20 characters: letters, numbers, or underscores." };
     }
     try {
-      db.prepare("UPDATE users SET username=?, display_name=?, bio=? WHERE sub=?")
-        .run(username, display_name, bio, req.profile.sub);
+      db.prepare("UPDATE users SET username=?, display_name=?, bio=?, avatar=? WHERE sub=?")
+        .run(username, display_name, bio, avatar, req.profile.sub);
     } catch (e) {
       if (e.code === "SQLITE_CONSTRAINT_UNIQUE") return { draft, error: "That username is taken." };
       throw e;

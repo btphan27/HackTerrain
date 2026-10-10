@@ -1,6 +1,7 @@
 const express = require("express");
 const { db, getStats } = require("../db");
 const t = require("../teamdata");
+const terrain = require("../terrain");
 
 module.exports = function ({ requireLogin, show }) {
   const router = express.Router();
@@ -15,7 +16,7 @@ module.exports = function ({ requireLogin, show }) {
     // email, sub, lat and lng are deliberately NOT selected
     const row = db
       .prepare(
-        `SELECT sub, username, display_name, picture, bio, created_at,
+        `SELECT sub, username, display_name, picture, avatar, bio, created_at,
                 school, major, city, looking_for_team, discord,
                 experience, goal, roles
          FROM users WHERE username = ?`
@@ -50,6 +51,7 @@ module.exports = function ({ requireLogin, show }) {
       profile, stats, badges, recent, isOwner,
       skills: t.getSkills(row.sub),
       hackathons: t.getHackathons(row.sub),
+      terrain: terrain.getSummary(row.sub),
     });
   });
 
