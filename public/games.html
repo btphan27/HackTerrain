@@ -29,63 +29,27 @@
         <p>Pick a game to build for your next hackathon.</p>
       </div>
 
-      <form class="filters" aria-label="Filter game ideas">
-        <label>Genre
-          <select name="genre"><option value="">All</option><option>Puzzle</option><option>Arcade</option><option>Strategy</option></select>
+      <form id="challenge-form" class="filters" aria-label="Generate a challenge">
+        <label>Topic
+          <select name="topic">
+            <option value="problem-solving">Problem solving</option>
+            <option value="teamwork">Team work</option>
+            <option value="project-brainstorming">Project brainstorming</option>
+            <option value="mvp">Minimum viable product</option>
+            <option value="pitching">Pitching</option>
+          </select>
         </label>
         <label>Difficulty
-          <select name="difficulty"><option value="">All</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select>
+          <select name="difficulty">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
         </label>
-        <label>Time available
-          <select name="time"><option value="">Any</option><option>24 hours</option><option>48 hours</option></select>
-        </label>
-        <button class="btn" type="submit">Apply filters</button>
+        <button class="btn" type="submit">Generate challenge</button>
       </form>
-
-      <div class="grid">
-        <article class="card">
-          <h3>Game idea title</h3>
-          <p class="meta">Difficulty &bull; Time estimate</p>
-          <p>One-line pitch for the game.</p>
-          <span class="tag">Genre</span>
-          <a class="btn btn-secondary" href="#">View details</a>
-        </article>
-        <article class="card">
-          <h3>Game idea title</h3>
-          <p class="meta">Difficulty &bull; Time estimate</p>
-          <p>One-line pitch for the game.</p>
-          <span class="tag">Genre</span>
-          <a class="btn btn-secondary" href="#">View details</a>
-        </article>
-        <article class="card">
-          <h3>Game idea title</h3>
-          <p class="meta">Difficulty &bull; Time estimate</p>
-          <p>One-line pitch for the game.</p>
-          <span class="tag">Genre</span>
-          <a class="btn btn-secondary" href="#">View details</a>
-        </article>
-        <article class="card">
-          <h3>Game idea title</h3>
-          <p class="meta">Difficulty &bull; Time estimate</p>
-          <p>One-line pitch for the game.</p>
-          <span class="tag">Genre</span>
-          <a class="btn btn-secondary" href="#">View details</a>
-        </article>
-        <article class="card">
-          <h3>Game idea title</h3>
-          <p class="meta">Difficulty &bull; Time estimate</p>
-          <p>One-line pitch for the game.</p>
-          <span class="tag">Genre</span>
-          <a class="btn btn-secondary" href="#">View details</a>
-        </article>
-        <article class="card">
-          <h3>Game idea title</h3>
-          <p class="meta">Difficulty &bull; Time estimate</p>
-          <p>One-line pitch for the game.</p>
-          <span class="tag">Genre</span>
-          <a class="btn btn-secondary" href="#">View details</a>
-        </article>
-      </div>
+      
+      <div id="challenge-result"></div>
     </div>
   </main>
   <footer class="site-footer">
@@ -102,5 +66,6 @@
     </div>
   </footer>
   <script src="js/main.js"></script>
+  <script src="js/games.js"></script>
 </body>
 </html>

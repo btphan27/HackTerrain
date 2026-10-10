@@ -15,7 +15,7 @@ export const TOPICS = [
 ];
 export const DIFFICULTIES = ["easy", "medium", "hard"];
 
-const MODEL = "gemini-2.5-flash"; // check AI Studio for the current model name
+const MODEL = "gemini-3.8-flash"; //curr model
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 function loadJson(path) {
