@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head><title>Team settings</title></head>
+<body>
+  <h1>Team and skills</h1>
+  <% if (error) { %><p style="color:red"><%= error %></p><% } %>
+  <form method="POST" action="/settings/team">
+    <label>School <input name="school" value="<%= profile.school %>"></label><br>
+    <label>Major <input name="major" value="<%= profile.major %>"></label><br>
+    <label>City <input name="city" placeholder="Atlanta, GA" value="<%= profile.city %>"></label><br>
+    <label>Discord <input name="discord" placeholder="username" value="<%= profile.discord %>"></label><br>
+    <label><input type="checkbox" name="looking_for_team" <%= profile.looking_for_team ? "checked" : "" %>>
+      I'm looking for a team (shows my Discord to logged-in users)</label>
+
+    <h3>Skills</h3>
+    <% allSkills.forEach(function (s) { %>
+      <label><input type="checkbox" name="skills" value="<%= s %>"
+        <%= profile.skills.includes(s) ? "checked" : "" %>> <%= s %></label>
+    <% }) %>
+    <p><label>Other skills, separated by commas
+      <input name="custom_skills" placeholder="e.g. unity, solidity, blender" value="<%= profile.custom_skills %>"></label></p>
+
+    <h3>Hackathons I'm interested in (up to 3)</h3>
+    <%- include('partials/hackathon-picker', {
+          hackathons: hackathons,
+          selected: profile.hackathons.map(function (x) { return x.id; }),
+          hasLocation: hasLocation, regions: regions, tags: tags
+    }) %>
+
+    <button type="submit">Save</button>
+  </form>
+  <p><a href="/profile">Back to profile</a></p>
+</body>
+</html>

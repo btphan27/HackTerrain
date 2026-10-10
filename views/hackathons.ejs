@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head><title>Hackathons | HackTerrain</title></head>
+<body>
+  <h1>Upcoming hackathons</h1>
+  <p>From MLH's official season schedule, updated automatically.</p>
+
+  <form method="GET" action="/hackathons">
+    <input type="search" name="q" placeholder="Search by name or city" value="<%= filters.q %>">
+    <select name="region">
+      <option value="">All regions</option>
+      <% regions.forEach(function (r) { %><option value="<%= r.id %>" <%= filters.region === r.id ? "selected" : "" %>><%= r.label %></option><% }) %>
+    </select>
+    <select name="format">
+      <option value="">Any format</option>
+      <% ["in-person", "online", "hybrid"].forEach(function (f) { %><option value="<%= f %>" <%= filters.format === f ? "selected" : "" %>><%= f %></option><% }) %>
+    </select>
+    <select name="month">
+      <option value="">Any month</option>
+      <% months.forEach(function (m) { %><option value="<%= m %>" <%= filters.month === m ? "selected" : "" %>><%= m %></option><% }) %>
+    </select>
+    <select name="tag">
+      <option value="">All types</option>
+      <% tags.forEach(function (x) { %><option value="<%= x.id %>" <%= filters.tag === x.id ? "selected" : "" %>><%= x.label %></option><% }) %>
+    </select>
+    <% if (hasLocation) { %>
+      <select name="radius">
+        <option value="">Any distance</option>
+        <% [25, 50, 100, 250, 500].forEach(function (r) { %><option value="<%= r %>" <%= String(filters.radius) === String(r) ? "selected" : "" %>>Within <%= r %> miles</option><% }) %>
+      </select>
+    <% } %>
+    <button type="submit">Filter</button> <a href="/hackathons">Clear</a>
+  </form>
+
+  <p><%= hackathons.length %> of <%= totalActive %> events</p>
+  <ul>
+    <% hackathons.forEach(function (h) { %>
+      <li>
+        <a href="<%= h.url %>" target="_blank" rel="noopener noreferrer"><%= h.name %></a>
+        | <%= h.dates %> | <%= h.location || "Online" %> | <%= h.format %>
+        <% if (h.tags.length) { %>| <%= h.tags.join(", ") %><% } %>
+        <% if (h.distance !== null) { %>| <%= h.distance %> mi<% } %>
+      </li>
+    <% }) %>
+  </ul>
+</body>
+</html>

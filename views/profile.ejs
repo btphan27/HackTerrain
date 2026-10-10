@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head><title><%= profile.display_name %> | HackTerrain</title></head>
+<body>
+  <% if (profile.picture) { %><img src="<%= profile.picture %>" width="80"><% } %>
+  <h1><%= profile.display_name %> <small>@<%= profile.username %></small></h1>
+  <p><%= profile.bio %></p>
+  <p><%= profile.school %> | <%= profile.major %> | <%= profile.city %></p>
+  <% if (profile.experience) { %><p>Experience: <%= profile.experience %></p><% } %>
+  <% if (profile.goal) { %><p>Goal: <%= profile.goal %></p><% } %>
+  <% if (profile.roles.length) { %><p>Roles: <%= profile.roles.join(", ") %></p><% } %>
+  <% if (profile.looking_for_team) { %><p><strong>Looking for a team</strong></p><% } %>
+  <% if (profile.discord) { %><p>Discord: <%= profile.discord %></p><% } %>
+
+  <p>Level <%= stats.level %> (<%= stats.rank %>) | <%= stats.points %> points | <%= stats.streak %>-day streak</p>
+  <progress value="<%= stats.progress %>" max="100"></progress>
+
+  <h3>Skills</h3>
+  <ul><% skills.forEach(function (s) { %><li><%= s %></li><% }) %></ul>
+
+  <h3>Hackathons I'm interested in</h3>
+  <ul><% hackathons.forEach(function (h) { %><li><a href="<%= h.url %>"><%= h.name %></a> <%= h.dates %></li><% }) %></ul>
+
+  <h3>Badges</h3>
+  <ul><% badges.forEach(function (b) { %><li><%= b.name %>: <%= b.description %></li><% }) %></ul>
+
+  <% if (isOwner) { %>
+    <p><a href="/settings">Edit account</a> | <a href="/settings/team">Edit skills and team info</a> | <a href="/onboarding/1">Retake survey</a> | <a href="/teammates">Find teammates</a></p>
+  <% } %>
+</body>
+</html>

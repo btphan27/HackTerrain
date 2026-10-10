@@ -1,0 +1,111 @@
+<%# Filterable hackathon picker. Needs: hackathons, selected (array of ids), hasLocation, regions, tags.
+    Filtering happens in the browser, so checked boxes are never lost. Controls have no "name", so they aren't submitted. %>
+<%
+  var months = [];
+  hackathons.forEach(function (h) { if (h.month && months.indexOf(h.month) === -1) months.push(h.month); });
+  function monthLabel(m) {
+    return new Date(m + "-01T00:00:00Z").toLocaleString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+  }
+%>
+<div id="hk-filters">
+  <input type="search" id="hk-q" placeholder="Search by name or city">
+  <select id="hk-region">
+    <option value="">All regions</option>
+    <% regions.forEach(function (r) { %><option value="<%= r.id %>"><%= r.label %></option><% }) %>
+  </select>
+  <select id="hk-format">
+    <option value="">Any format</option>
+    <option value="in-person">In person</option>
+    <option value="online">Online</option>
+    <option value="hybrid">Hybrid</option>
+  </select>
+  <select id="hk-month">
+    <option value="">Any month</option>
+    <% months.forEach(function (m) { %><option value="<%= m %>"><%= monthLabel(m) %></option><% }) %>
+  </select>
+  <select id="hk-tag">
+    <option value="">All types</option>
+    <% tags.forEach(function (x) { %><option value="<%= x.id %>"><%= x.label %></option><% }) %>
+  </select>
+  <% if (hasLocation) { %>
+    <select id="hk-radius">
+      <option value="">Any distance</option>
+      <option value="50">Within 50 miles of me</option>
+      <option value="100">Within 100 miles</option>
+      <option value="250">Within 250 miles</option>
+      <option value="500">Within 500 miles</option>
+    </select>
+  <% } else { %>
+    <small>Add your city in step 2 to filter by distance.</small>
+  <% } %>
+  <span id="hk-count"></span> <small id="hk-limit"></small>
+</div>
+
+<div id="hk-list">
+  <% hackathons.forEach(function (h) { %>
+    <div class="hk"
+         data-name="<%= (h.name + ' ' + h.location).toLowerCase() %>"
+         data-region="<%= h.region %>"
+         data-format="<%= h.format %>"
+         data-month="<%= h.month %>"
+         data-tags="<%= h.tags.join(',') %>"
+         data-distance="<%= h.distance === null ? '' : h.distance %>">
+      <label>
+        <input type="checkbox" name="hackathons" value="<%= h.id %>" <%= selected.indexOf(h.id) !== -1 ? "checked" : "" %>>
+        <strong><%= h.name %></strong>
+      </label>
+      <small>
+        <%= h.dates %> | <%= h.location || "Online" %> | <%= h.format %>
+        <% if (h.tags.length) { %> | <%= h.tags.join(", ") %><% } %>
+        <% if (h.distance !== null) { %> | <%= h.distance %> mi from you<% } %>
+        | <a href="<%= h.url %>" target="_blank" rel="noopener noreferrer">website</a>
+      </small>
+    </div>
+  <% }) %>
+  <% if (!hackathons.length) { %><p>No upcoming hackathons are loaded right now. You can skip this step.</p><% } %>
+</div>
+
+<script>
+(function () {
+  var items = Array.prototype.slice.call(document.querySelectorAll("#hk-list .hk"));
+  var ids = ["q", "region", "format", "month", "tag", "radius"];
+  var el = {};
+  ids.forEach(function (i) { el[i] = document.getElementById("hk-" + i); });
+  var count = document.getElementById("hk-count");
+  var limitNote = document.getElementById("hk-limit");
+  var MAX = 3;
+
+  function apply() {
+    var text = el.q.value.trim().toLowerCase();
+    var shown = 0;
+    items.forEach(function (it) {
+      var d = it.dataset, ok = true;
+      if (text && d.name.indexOf(text) === -1) ok = false;
+      if (el.region.value && d.region !== el.region.value) ok = false;
+      if (el.format.value && d.format !== el.format.value) ok = false;
+      if (el.month.value && d.month !== el.month.value) ok = false;
+      if (el.tag.value && d.tags.split(",").indexOf(el.tag.value) === -1) ok = false;
+      if (el.radius && el.radius.value) {
+        var miles = parseFloat(d.distance);
+        if (isNaN(miles) || miles > parseFloat(el.radius.value)) ok = false;
+      }
+      it.style.display = ok ? "" : "none";
+      if (ok) shown++;
+    });
+    count.textContent = shown + " of " + items.length + " hackathons";
+  }
+
+  function enforceLimit() {
+    var boxes = Array.prototype.slice.call(document.querySelectorAll("#hk-list input[type=checkbox]"));
+    var checked = boxes.filter(function (b) { return b.checked; }).length;
+    boxes.forEach(function (b) { b.disabled = !b.checked && checked >= MAX; });
+    limitNote.textContent = checked + " of " + MAX + " picked";
+  }
+
+  ids.forEach(function (i) { if (el[i]) el[i].addEventListener(i === "q" ? "input" : "change", apply); });
+  el.q.addEventListener("keydown", function (e) { if (e.key === "Enter") e.preventDefault(); });
+  document.getElementById("hk-list").addEventListener("change", enforceLimit);
+  apply();
+  enforceLimit();
+})();
+</script>

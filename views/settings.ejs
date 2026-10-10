@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head><title>Settings</title></head>
+<body>
+  <h1>Account settings</h1>
+  <% if (error) { %><p style="color:red"><%= error %></p><% } %>
+  <form method="POST" action="/settings">
+    <label>Username <input name="username" value="<%= profile.username %>" required></label><br>
+    <label>Name <input name="display_name" value="<%= profile.display_name %>"></label><br>
+    <label>Bio <textarea name="bio" maxlength="200"><%= profile.bio %></textarea></label><br>
+    <button type="submit">Save</button>
+  </form>
+  <p><a href="/settings/team">Team and skills settings</a> | <a href="/profile">Back to profile</a></p>
+</body>
+</html>
