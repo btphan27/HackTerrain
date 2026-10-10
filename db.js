@@ -1,5 +1,10 @@
 const Database = require("better-sqlite3");
-const db = new Database("app.db");
+const fs = require("fs");
+const path = require("path");
+// On a host with a persistent disk, point DB_PATH at it (e.g. /var/data/app.db). Locally it stays app.db.
+const DB_PATH = process.env.DB_PATH || "app.db";
+fs.mkdirSync(path.dirname(path.resolve(DB_PATH)), { recursive: true });
+const db = new Database(DB_PATH);
 db.pragma("journal_mode = WAL");
 
 db.exec(`

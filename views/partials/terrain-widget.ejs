@@ -1,0 +1,137 @@
+<%# The terrain. Needs: api (where to load it from), editable (true/false), dev (show test buttons).
+    The theme person can restyle everything here. Hook into: .tr-cell[data-type][data-kind], .tr-inv-item[data-type]. %>
+<div id="terrain-root" data-api="<%= api %>" data-editable="<%= editable ? 'true' : 'false' %>" data-dev="<%= dev ? 'true' : 'false' %>">
+  <p id="tr-status">Loading your land...</p>
+  <p id="tr-msg" aria-live="polite"></p>
+  <div id="tr-grid" class="tr-grid"></div>
+  <div id="tr-actions"></div>
+  <h4 id="tr-inv-title" hidden>Inventory (click an item, then click an empty square)</h4>
+  <div id="tr-inv" class="tr-inv"></div>
+  <% if (dev && editable) { %>
+    <fieldset id="tr-dev"><legend>Testing only: pretend a challenge was completed</legend>
+      <button class="btn btn-dark" type="button" data-dev="easy">Easy challenge</button>
+      <button class="btn btn-dark" type="button" data-dev="medium">Medium challenge</button>
+      <button class="btn btn-dark" type="button" data-dev="hard">Hard challenge</button>
+    </fieldset>
+  <% } %>
+</div>
+
+<script>
+(function () {
+  var root = document.getElementById("terrain-root");
+  var api = root.dataset.api;
+  var editable = root.dataset.editable === "true";
+  var state = null;
+  var selected = null;
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+  function say(text) { document.getElementById("tr-msg").textContent = text || ""; }
+
+  function call(method, url, body) {
+    var opts = { method: method, credentials: "same-origin", headers: {} };
+    if (body) { opts.headers["Content-Type"] = "application/json"; opts.body = JSON.stringify(body); }
+    return fetch(url, opts).then(function (r) {
+      return r.json().then(function (data) { if (!r.ok) throw new Error(data.error || "Something went wrong"); return data; });
+    });
+  }
+
+  function act(action, body) {
+    return call("POST", "/api/terrain/" + action, body).then(function (res) { state = res.terrain; say(""); render(); })
+      .catch(function (e) { say(e.message); });
+  }
+
+  function find(id) {
+    for (var i = 0; i < state.items.length; i++) if (state.items[i].id === id) return state.items[i];
+    return null;
+  }
+
+  function render() {
+    var t = state;
+    var c = t.counts;
+    var status = "Land " + t.landSize + "x" + t.landSize + " | " + c.nature + " nature, " + c.animal + " animals, " + c.building + " buildings";
+    status += t.nextExpansionIn ? " | land grows after " + t.nextExpansionIn + " more reward" + (t.nextExpansionIn > 1 ? "s" : "") : " | land is fully grown";
+    document.getElementById("tr-status").textContent = status;
+
+    var grid = document.getElementById("tr-grid");
+    grid.innerHTML = "";
+    grid.className = "tr-grid" + (editable ? "" : " tr-readonly");
+    grid.style.gridTemplateColumns = "repeat(" + t.landSize + ", 44px)";
+    var at = {};
+    t.placed.forEach(function (i) { at[i.x + "," + i.y] = i; });
+
+    for (var y = 0; y < t.landSize; y++) {
+      for (var x = 0; x < t.landSize; x++) {
+        (function (x, y) {
+          var it = at[x + "," + y];
+          var cell = el("button", "tr-cell");
+          cell.type = "button";
+          if (it) {
+            cell.classList.add("has-item");
+            cell.dataset.type = it.type;
+            cell.dataset.kind = it.kind;
+            cell.textContent = it.emoji;
+            cell.title = it.name + " (" + it.rarity + ")";
+            if (selected === it.id) cell.classList.add("selected");
+          } else {
+            cell.setAttribute("aria-label", "empty square");
+          }
+          cell.addEventListener("click", function () {
+            if (!editable) return;
+            if (it) { selected = selected === it.id ? null : it.id; render(); }
+            else if (selected !== null) { var id = selected; selected = null; act("place", { id: id, x: x, y: y }); }
+          });
+          grid.appendChild(cell);
+        })(x, y);
+      }
+    }
+
+    var actions = document.getElementById("tr-actions");
+    actions.innerHTML = "";
+    var sel = selected !== null ? find(selected) : null;
+    if (editable && sel && sel.x !== null) {
+      var pick = el("button", "btn btn-dark", "Pick up " + sel.name);
+      pick.type = "button";
+      pick.addEventListener("click", function () { var id = selected; act("remove", { id: id }).then(function () { selected = id; render(); }); });
+      actions.appendChild(pick);
+    }
+
+    var inv = document.getElementById("tr-inv");
+    inv.innerHTML = "";
+    document.getElementById("tr-inv-title").hidden = !t.inventory.length;
+    t.inventory.forEach(function (it) {
+      var b = el("button", "tr-inv-item", it.emoji);
+      b.type = "button";
+      b.dataset.type = it.type;
+      b.title = it.name + " (" + it.rarity + ")";
+      if (selected === it.id) b.classList.add("selected");
+      b.addEventListener("click", function () { if (editable) { selected = selected === it.id ? null : it.id; render(); } });
+      inv.appendChild(b);
+    });
+  }
+
+  function load() {
+    return call("GET", api).then(function (data) { state = data; render(); })
+      .catch(function (e) { document.getElementById("tr-status").textContent = "Couldn't load the terrain: " + e.message; });
+  }
+
+  var dev = document.getElementById("tr-dev");
+  if (dev) {
+    dev.addEventListener("click", function (e) {
+      var d = e.target.dataset && e.target.dataset.dev;
+      if (!d) return;
+      call("POST", "/api/terrain/dev-grant", { difficulty: d }).then(function (res) {
+        state = res.terrain;
+        say("You earned: " + res.reward.emoji + " " + res.reward.name + " (" + res.reward.rarity + ")" + (res.expanded ? " | your land grew!" : ""));
+        render();
+      }).catch(function (err) { say(err.message); });
+    });
+  }
+
+  load();
+})();
+</script>

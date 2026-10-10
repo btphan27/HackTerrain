@@ -1,6 +1,7 @@
 const express = require("express");
 const { db, getStats } = require("../db");
 const t = require("../teamdata");
+const terrain = require("../terrain");
 
 module.exports = function ({ requireLogin, show }) {
   const router = express.Router();
@@ -50,6 +51,7 @@ module.exports = function ({ requireLogin, show }) {
       profile, stats, badges, recent, isOwner,
       skills: t.getSkills(row.sub),
       hackathons: t.getHackathons(row.sub),
+      terrain: terrain.getSummary(row.sub),
     });
   });
 

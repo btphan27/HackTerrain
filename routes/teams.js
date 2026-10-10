@@ -96,14 +96,20 @@ module.exports = function ({ requireLogin, show }) {
     show(res, "teammates", { matches, filters: { radius, skill }, allSkills: t.SKILLS, hasLocation: me.lat != null });
   });
 
-  // Public catalog page: /hackathons?q=hack&region=europe&format=in-person&month=2026-11&tag=diversity&radius=100
+  // Public catalog page: /hackathons?q=hack&region=europe&format=in-person&month=2026-11&tag=diversity&radius=100&page=2
+  const PER_PAGE = 12;
   router.get("/hackathons", (req, res) => {
     const filters = filtersFrom(req.query);
     const near = nearOf(req.profile);
     const all = t.listHackathons({}, near);
+    const matches = t.listHackathons(filters, near);
+    const pages = Math.max(1, Math.ceil(matches.length / PER_PAGE));
+    const page = Math.min(Math.max(parseInt(req.query.page, 10) || 1, 1), pages);
+    // the filters as a query string, so the Previous/Next links keep them
+    const qs = new URLSearchParams(Object.entries(filters).filter(([, v]) => v !== "")).toString();
     show(res, "hackathons", {
-      hackathons: t.listHackathons(filters, near),
-      totalActive: all.length,
+      hackathons: matches.slice((page - 1) * PER_PAGE, page * PER_PAGE),
+      total: matches.length, totalActive: all.length, page, pages, qs,
       months: [...new Set(all.map((h) => h.month).filter(Boolean))],
       filters, regions: t.REGIONS, tags: t.HACK_TAGS, hasLocation: !!near,
     });

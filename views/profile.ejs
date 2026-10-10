@@ -1,31 +1,77 @@
-<!DOCTYPE html>
-<html>
-<head><title><%= profile.display_name %> | HackTerrain</title></head>
-<body>
-  <% if (profile.picture) { %><img src="<%= profile.picture %>" width="80"><% } %>
-  <h1><%= profile.display_name %> <small>@<%= profile.username %></small></h1>
-  <p><%= profile.bio %></p>
-  <p><%= profile.school %> | <%= profile.major %> | <%= profile.city %></p>
-  <% if (profile.experience) { %><p>Experience: <%= profile.experience %></p><% } %>
-  <% if (profile.goal) { %><p>Goal: <%= profile.goal %></p><% } %>
-  <% if (profile.roles.length) { %><p>Roles: <%= profile.roles.join(", ") %></p><% } %>
-  <% if (profile.looking_for_team) { %><p><strong>Looking for a team</strong></p><% } %>
-  <% if (profile.discord) { %><p>Discord: <%= profile.discord %></p><% } %>
+<%- include('partials/header', { title: profile.display_name + " | HackOrGoHome", description: "HackTerrain profile.", active: isOwner ? "profile" : "" }) %>
+  <main id="main">
+    <div class="container">
+      <div class="page-title">
+        <div class="profile-head">
+          <% if (profile.picture) { %><img class="avatar" src="<%= profile.picture %>" alt=""><% } else { %><div class="avatar" aria-hidden="true"><%= (profile.display_name || profile.username).charAt(0).toUpperCase() %></div><% } %>
+          <div>
+            <h1><%= profile.display_name %></h1>
+            <p>@<%= profile.username %><% if (profile.looking_for_team) { %> &bull; <span class="tag shared">Looking for a team</span><% } %></p>
+          </div>
+        </div>
+        <% if (profile.bio) { %><p><%= profile.bio %></p><% } %>
+      </div>
 
-  <p>Level <%= stats.level %> (<%= stats.rank %>) | <%= stats.points %> points | <%= stats.streak %>-day streak</p>
-  <progress value="<%= stats.progress %>" max="100"></progress>
+      <% if (isOwner) { %>
+        <div class="page-actions">
+          <a class="btn btn-dark" href="/settings">Edit account</a>
+          <a class="btn btn-dark" href="/settings/team">Edit skills and team info</a>
+          <a class="btn btn-dark" href="/onboarding/1">Retake survey</a>
+          <a class="btn btn-primary" href="/teammates">Find teammates</a>
+        </div>
+      <% } %>
 
-  <h3>Skills</h3>
-  <ul><% skills.forEach(function (s) { %><li><%= s %></li><% }) %></ul>
+      <div class="profile-grid">
+        <article class="card">
+          <h3>Progress</h3>
+          <p class="stat">Level <%= stats.level %></p>
+          <p class="meta"><%= stats.rank %> &bull; <%= stats.points %> points &bull; <%= stats.streak %>-day streak</p>
+          <progress value="<%= stats.progress %>" max="100"></progress>
+        </article>
 
-  <h3>Hackathons I'm interested in</h3>
-  <ul><% hackathons.forEach(function (h) { %><li><a href="<%= h.url %>"><%= h.name %></a> <%= h.dates %></li><% }) %></ul>
+        <article class="card">
+          <h3>About</h3>
+          <% if (profile.school || profile.major) { %><p><%= profile.school %><%= profile.school && profile.major ? " | " : "" %><%= profile.major %></p><% } %>
+          <% if (profile.city) { %><p class="meta"><%= profile.city %></p><% } %>
+          <% if (profile.experience) { %><p>Experience: <%= profile.experience %></p><% } %>
+          <% if (profile.goal) { %><p>Goal: <%= profile.goal %></p><% } %>
+          <% if (profile.roles.length) { %><p>Roles: <%= profile.roles.join(", ") %></p><% } %>
+          <% if (profile.discord) { %><p>Discord: <strong><%= profile.discord %></strong></p><% } %>
+        </article>
 
-  <h3>Badges</h3>
-  <ul><% badges.forEach(function (b) { %><li><%= b.name %>: <%= b.description %></li><% }) %></ul>
+        <article class="card">
+          <h3>Terrain</h3>
+          <p class="stat"><%= terrain.total %> items</p>
+          <p class="meta">Nature <%= terrain.nature %> &bull; Animals <%= terrain.animal %> &bull; Buildings <%= terrain.building %></p>
+          <a class="btn btn-dark" href="/u/<%= profile.username %>/terrain">View terrain</a>
+        </article>
 
-  <% if (isOwner) { %>
-    <p><a href="/settings">Edit account</a> | <a href="/settings/team">Edit skills and team info</a> | <a href="/onboarding/1">Retake survey</a> | <a href="/teammates">Find teammates</a></p>
-  <% } %>
-</body>
-</html>
+        <article class="card">
+          <h3>Skills</h3>
+          <% if (skills.length) { %><div class="tags"><% skills.forEach(function (s) { %><span class="tag"><%= s %></span><% }) %></div><% } else { %><p>No skills added yet.</p><% } %>
+        </article>
+
+        <article class="card">
+          <h3>Hackathons I'm interested in</h3>
+          <% if (hackathons.length) { %>
+            <ul><% hackathons.forEach(function (h) { %><li><a href="<%= h.url %>" target="_blank" rel="noopener noreferrer"><%= h.name %></a> <span class="meta"><%= h.dates %></span></li><% }) %></ul>
+          <% } else { %><p>None picked yet.</p><% } %>
+        </article>
+
+        <article class="card">
+          <h3>Badges</h3>
+          <% if (badges.length) { %>
+            <ul><% badges.forEach(function (b) { %><li><strong><%= b.name %></strong>: <%= b.description %></li><% }) %></ul>
+          <% } else { %><p>No badges yet.</p><% } %>
+        </article>
+
+        <% if (recent.length) { %>
+          <article class="card wide">
+            <h3>Recent activity</h3>
+            <ul><% recent.forEach(function (r) { %><li>+<%= r.points %> points: <%= r.reason %></li><% }) %></ul>
+          </article>
+        <% } %>
+      </div>
+    </div>
+  </main>
+<%- include('partials/footer') %>

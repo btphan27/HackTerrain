@@ -1,0 +1,44 @@
+<%
+  var _title = typeof title !== "undefined" ? title : "HackOrGoHome";
+  var _desc = typeof description !== "undefined" ? description : "Find everything you need for a hackathon here! Look up hackathons, build your skills through games, and find a team!";
+  var _body = typeof bodyClass !== "undefined" ? bodyClass : "";
+  var _active = typeof active !== "undefined" ? active : "";
+  var cur = function (name) { return _active === name ? ' aria-current="page"' : ""; };
+  var _loggedIn = typeof user !== "undefined" && user;
+-%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= _title %></title>
+  <meta name="description" content="<%= _desc %>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Pixelify+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body<%- _body ? ' class="' + _body + '"' : '' %>>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- HEADER: logo left, tabs right -->
+  <header class="site-header">
+    <div class="container">
+      <a class="logo" href="/">HackOrGoHome</a>
+      <nav aria-label="Main">
+        <ul class="nav-list">
+          <li><a href="/games"<%- cur("games") %>>Quests</a></li>
+          <li><a href="/hackathons"<%- cur("catalog") %>>Hackathons</a></li>
+          <li><a href="/teammates"<%- cur("teammates") %>>Team Finder</a></li>
+          <li><a href="/terrain"<%- cur("terrain") %>>My Terrain</a></li>
+          <li><a href="/host"<%- cur("host") %>>Launch Your Hackathon</a></li>
+          <% if (_loggedIn) { %>
+            <li><a href="/profile"<%- cur("profile") %>>My Profile</a></li>
+            <li><a href="/logout">Log out</a></li>
+          <% } else { %>
+            <li><a class="nav-cta" href="/login">Log in</a></li>
+          <% } %>
+        </ul>
+      </nav>
+    </div>
+  </header>
