@@ -4,7 +4,7 @@
   <p id="tr-status">Loading your land...</p>
   <p id="tr-msg" aria-live="polite"></p>
 
-  <div id="tr-scene" class="tr-scene" aria-label="Your terrain">
+  <div id="tr-scene" class="tr-scene" aria-label="Your world">
     <div id="tr-items" class="tr-items"></div>
     <p id="tr-empty" class="tr-empty" hidden></p>
   </div>
@@ -244,7 +244,7 @@
 
   function load() {
     return call("GET", api).then(function (data) { state = data; render(); })
-      .catch(function (e) { document.getElementById("tr-status").textContent = "Couldn't load the terrain: " + e.message; });
+      .catch(function (e) { document.getElementById("tr-status").textContent = "Couldn't load your world: " + e.message; });
   }
 
   var dev = document.getElementById("tr-dev");
