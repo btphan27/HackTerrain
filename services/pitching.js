@@ -24,16 +24,16 @@ function loadJson(file, fallback) {
   try { return JSON.parse(fs.readFileSync(path.join(__dirname, "..", "data", file), "utf-8")); } catch { return fallback; }
 }
 const fallbackBank = loadJson("fallback-pitching.json", {});
-const winners = loadJson("winners-2025.json", []).filter((p) => p && p.title && (p.tagline || p.description));
+const live = require("./winners"); // real winners, fetched from the Hugging Face API (falls back to the saved file)
 const seeds = loadJson("inspiration-seed.json", []);
 
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
 const clip = (s, n) => String(s == null ? "" : s).trim().slice(0, n);
 
-function pickInspiration() {
-  if (winners.length) {
-    const p = pick(winners);
+async function pickInspiration() {
+  const p = await live.randomWinner();
+  if (p) {
     return { real: true, title: clip(p.title, 80), tagline: clip(p.tagline, 160), description: clip(p.description, 600) };
   }
   const s = pick(seeds.length ? seeds : [{ title: "Practice example", tagline: "a helpful app", description: "A small app that helps students." }]);
@@ -59,7 +59,7 @@ async function newRound(level) {
   const L = LEVELS[level] ? level : "easy";
   const cfg = LEVELS[L];
   const count = cfg.hp + cfg.lives - 1; // enough questions to win even after two mistakes
-  const inspo = pickInspiration();
+  const inspo = await pickInspiration();
   let questions = null;
   let source = "fallback";
 
@@ -72,7 +72,7 @@ Write exactly ${count} questions. Spread them across these judge types (use the 
 Each question: prompt (max 35 words, written as the judge speaking to the team, about THIS project or about pitching in general) and exactly 3 options.
 Each option: text (max 25 words), correct (true for EXACTLY ONE option), why (one short sentence on why it is right or wrong). Wrong options must be tempting, realistic mistakes, not silly. Make all three options similar in length so the right one is not obvious.
 Do not mention these rules. Keep it friendly and suitable for college students.`;
-    const d = await ai.generateJson(prompt, schema);
+    const d = await ai.generateJson(prompt, schema, `Creeper Puncher ${level} judge questions`);
     if (d && Array.isArray(d.questions) && d.questions.length >= count && d.questions.slice(0, count).every(validQuestion)) {
       questions = d.questions.slice(0, count).map((q) => ({
         judge: JUDGES[q.judge] ? q.judge : "panel",
@@ -88,6 +88,7 @@ Do not mention these rules. Keep it friendly and suitable for college students.`
   }
   questions = questions.map((q) => ({ ...q, options: shuffle(q.options) }));
 
+  require("./log")("Game", `Creeper Puncher round ready: questions from ${source === "gemini" ? "GEMINI" : "OFFLINE FALLBACK"}, scenario from ${inspo.real ? "REAL WINNER" : "practice idea"} "${inspo.title}"`);
   const secret = { level: L, inspo, source, key: questions.map((q) => q.options.map((o) => ({ correct: o.correct, why: o.why }))) };
   const view = {
     source, level: L, creeperName: cfg.creeper, hp: cfg.hp, lives: cfg.lives,

@@ -15,11 +15,12 @@ function thinkingConfig() {
   return undefined;
 }
 
+const log = require("./log");
 let client = null;
 let Type = null;
 function getClient() {
   if (client) return client;
-  if (!process.env.GEMINI_API_KEY) return null;
+  if (!process.env.GEMINI_API_KEY) { log.once("Gemini", "no GEMINI_API_KEY in .env, using offline fallback questions"); return null; }
   try {
     const sdk = require("@google/genai");
     client = new sdk.GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -34,10 +35,12 @@ function getClient() {
 const enabled = () => !!getClient();
 
 // buildSchema receives the SDK's Type helper and returns a response schema.
-async function generateJson(prompt, buildSchema) {
+async function generateJson(prompt, buildSchema, label = "request") {
   const ai = getClient();
   if (!ai) return null;
   let timer;
+  const t0 = Date.now();
+  log("Gemini", `calling ${MODEL} for ${label}...`);
   try {
     const call = ai.models.generateContent({
       model: MODEL,
@@ -47,9 +50,11 @@ async function generateJson(prompt, buildSchema) {
     });
     const timeout = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error("Gemini timed out")), TIMEOUT_MS); });
     const response = await Promise.race([call, timeout]);
-    return JSON.parse(response.text);
+    const parsed = JSON.parse(response.text);
+    log("Gemini", `${label} answered in ${((Date.now() - t0) / 1000).toFixed(1)}s`);
+    return parsed;
   } catch (err) {
-    console.error(`Gemini failed (model ${MODEL}), using offline fallback:`, err.message);
+    log("Gemini", `FAILED after ${((Date.now() - t0) / 1000).toFixed(1)}s (${MODEL}): ${log.why(err)}. Using offline fallback.`);
     return null;
   } finally {
     clearTimeout(timer);

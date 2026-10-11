@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node app.js",
     "dev": "node --watch app.js",
-    "check-mlh": "node scripts/check-mlh.js"
+    "check-mlh": "node scripts/check-mlh.js",
+    "fetch-winners": "node scripts/fetch-winners.js",
+    "check-connections": "node scripts/check-connections.js"
   },
   "license": "MIT",
   "dependencies": {

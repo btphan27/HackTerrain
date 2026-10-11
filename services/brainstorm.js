@@ -18,7 +18,7 @@ function loadJson(file) {
     return [];
   }
 }
-const winners = loadJson("winners-2025.json").filter((p) => p && p.title && (p.tagline || p.description));
+const live = require("./winners"); // real winners, fetched from the Hugging Face API (falls back to the saved file)
 const seeds = loadJson("inspiration-seed.json");
 
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
@@ -26,9 +26,9 @@ const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
 const clip = (s, n) => String(s == null ? "" : s).trim().slice(0, n);
 
 // One project to use as inspiration. `theme` is the problem area shown to the player.
-function pickInspiration() {
-  if (winners.length) {
-    const p = pick(winners);
+async function pickInspiration() {
+  const p = await live.randomWinner();
+  if (p) {
     return {
       real: true, title: clip(p.title, 80), tagline: clip(p.tagline, 160),
       description: clip(p.description, 700),
@@ -168,7 +168,7 @@ function validCraft(d) {
 async function newCraftRound(level = "easy") {
   const survival = level === "survival";
   const item = pick(survival ? SURVIVAL_ITEMS : ITEMS);
-  const inspo = pickInspiration();
+  const inspo = await pickInspiration();
   const name = pick(VILLAGER_NAMES);
   let villagerLine = survival
     ? `Night is coming and I need ${an(item.name)} to survive, but I only craft with good ideas. These questions are tricky! Think carefully about "${inspo.theme}" and we'll make it together.`
@@ -189,7 +189,7 @@ Write:
   Each option has: text (max 25 words, specific to this problem area), correct (true for exactly ONE option per question), why (one short sentence explaining why it is right or wrong).
   ${survival ? "SURVIVAL difficulty: every wrong option must be half right (a reasonable-sounding approach with a real flaw), so the player must weigh trade-offs. Make Q2 a decision under time pressure. Set hint to an empty string for all questions." : "The wrong options must be tempting and realistic mistakes (too broad, too big, tech first, vague), NOT silly."} Make all four options similar in length so the right one is not obvious. Do not mention these rules.
 ${GEMINI_RULES}`;
-    const d = await ai.generateJson(prompt, craftSchema);
+    const d = await ai.generateJson(prompt, craftSchema, `Village Crafting ${survival ? "(survival)" : "(easy)"} questions`);
     if (validCraft(d)) {
       villagerLine = clip(d.villagerLine, 400);
       questions = d.questions.map((q) => ({ prompt: clip(q.prompt, 300), hint: clip(q.hint, 200),
@@ -199,6 +199,7 @@ ${GEMINI_RULES}`;
   }
 
   questions = questions.map((q) => ({ ...q, hint: survival ? "" : q.hint, options: shuffled(q.options) }));
+  require("./log")("Game", `Village Crafting round ready: questions from ${source === "gemini" ? "GEMINI" : "OFFLINE FALLBACK"}, scenario from ${inspo.real ? "REAL WINNER" : "practice idea"} "${inspo.title}"`);
   const secret = { level: survival ? "survival" : "easy", itemId: item.id, theme: inspo.theme, inspo, source, key: questions.map((q) => q.options.map((o) => ({ correct: o.correct, why: o.why }))) };
   const view = {
     source, level: survival ? "survival" : "easy",
@@ -236,5 +237,5 @@ function craftedName(itemId, stars) {
 module.exports = {
   ITEMS, SURVIVAL_ITEMS,
   newCraftRound, judgeCraft, craftedName,
-  usingRealWinners: () => winners.length > 0,
+  usingRealWinners: () => live.count() > 0,
 };
