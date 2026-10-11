@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Creeper Puncher: Judge Arena | HackTerrain</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* Application-Consistent Pastel Minecraft Theme */
+    .retro-window {
+      background: var(--cream, #fff8ec);
+      border: 4px solid var(--ink, #4b3a68);
+      padding: 20px;
+      box-shadow: 6px 6px 0px rgba(75, 58, 104, 0.25);
+      font-family: var(--font-body);
+      max-width: 720px;
+      margin: 20px auto;
+    }
+    .retro-titlebar {
+      background: var(--ink, #4b3a68);
+      color: var(--cream, #fff8ec);
+      padding: 8px 12px;
+      font-weight: bold;
+      font-family: var(--font-pixel, monospace);
+      font-size: 1.05rem;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 2px solid var(--bedrock, #5d4c7e);
+    }
+    .retro-screen {
+      background: var(--sky-1, #c4e6ff);
+      border: 3px solid var(--ink, #4b3a68);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      min-height: 200px;
+    }
+
+    /* RESTYLED: Minecraft Man (Steve) Pastel Theme */
+    .pixel-steve {
+      width: 32px;
+      height: 48px;
+      background: var(--sky-1, #c4e6ff);
+      border: 2px solid var(--ink, #4b3a68);
+      position: relative;
+      display: inline-block;
+      transition: transform 0.3s ease;
+      image-rendering: pixelated;
+    }
+    .pixel-steve::before {
+      content: "";
+      position: absolute;
+      top: -16px;
+      left: -2px;
+      width: 32px;
+      height: 16px;
+      background: var(--dirt, #ecd0b0);
+      border: 2px solid var(--ink, #4b3a68);
+      border-bottom: none;
+    }
+
+    /* RESTYLED: Creeper Pastel Theme */
+    .pixel-creeper {
+      width: 32px;
+      height: 48px;
+      background: var(--grass, #a8e0a0);
+      border: 2px solid var(--ink, #4b3a68);
+      position: relative;
+      display: inline-block;
+      transition: transform 0.3s ease;
+      image-rendering: pixelated;
+    }
+    .pixel-creeper::before {
+      content: "";
+      position: absolute;
+      top: 8px;
+      left: 6px;
+      width: 16px;
+      height: 12px;
+      background: var(--ink, #4b3a68);
+      box-shadow: 0 16px 0 var(--ink, #4b3a68);
+    }
+    
+    .pixel-ground {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 35px;
+      background: var(--wood, #9a7b66);
+      border-top: 6px solid var(--grass, #a8e0a0);
+    }
+
+    /* Pastel Buttons Matching Application Theme */
+    .pixel-btn {
+      background: var(--pink, #ffc4dd);
+      border: 3px solid var(--ink, #4b3a68);
+      padding: 10px 18px;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: var(--font-pixel, monospace);
+      text-transform: uppercase;
+      color: var(--ink, #4b3a68);
+      box-shadow: 3px 3px 0px var(--ink, #4b3a68);
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    .pixel-btn:hover {
+      background: var(--pink-dark, #f59bc0);
+    }
+    .pixel-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px var(--ink, #4b3a68);
+    }
+
+    /* Question & Option Boxes Matching Pastel Design */
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 8px;
+      background: var(--white, #ffffff);
+      border: 2px solid var(--ink, #4b3a68);
+      padding: 12px;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-weight: bold;
+      color: var(--ink, #4b3a68);
+      border-radius: 4px;
+      transition: background 0.2s ease, transform 0.1s ease;
+    }
+    .option-btn:hover {
+      background: var(--lavender, #e9e0fb);
+      transform: translateX(4px);
+    }
+  </style>
+</head>
+<body style="background: var(--cream, #fff8ec); margin: 0; padding: 20px;">  
+<%- include('partials/header', { title: "Creeper Puncher | HackTerrain", description: "Defend your project in the Minecraft arena.", active: "games" }) %>
+
+  <main id="main">
+    <div class="container" style="max-width: 760px; margin: 0 auto;">
+      
+      <div style="margin-bottom: 16px;">
+        <a href="/games" class="pixel-btn" style="text-decoration: none; display: inline-block;">&larr; Back to Quests</a>
+      </div>
+
+      <!-- SETUP SCREEN: Difficulty Picker -->
+      <!-- SETUP SCREEN: Difficulty Picker -->
+<section id="screen-setup" class="retro-window" style="background: var(--cream, #fff8ec); border: 4px solid var(--ink, #4b3a68); box-shadow: 6px 6px 0px var(--ink, #4b3a68); border-radius: 0; padding: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+      <div>
+        <h3 style="margin: 0 0 4px 0; color: var(--ink, #4b3a68); font-family: var(--font-pixel, monospace); font-size: 1.4rem;">Judge Panel</h3>
+        <p style="margin: 0; color: var(--ink-soft, #6f5e8c); font-size: 0.85rem; font-weight: bold;">Creeper Puncher &bull; Easy or Survival</p>
+      </div>
+      <span style="background: var(--honey, #ffe28a); color: var(--ink, #4b3a68); border: 2px solid var(--ink, #4b3a68); padding: 4px 8px; font-weight: bold; font-size: 0.75rem; font-family: var(--font-pixel, monospace); text-transform: uppercase;">Minecraft Arena</span>
+    </div>
+  
+    <p style="color: var(--ink, #4b3a68); line-height: 1.4; margin-bottom: 20px;">Face off against technical and business judges, answer multiple-choice questions, and punch the Creeper!</p>
+  
+    <!-- Block Style Radio Container -->
+    <div style="display: grid; gap: 12px; margin-bottom: 24px;">
+      <label style="display: block; background: var(--white, #ffffff); border: 3px solid var(--ink, #4b3a68); padding: 14px; cursor: pointer; box-shadow: 4px 4px 0px var(--ink, #4b3a68); transition: transform 0.1s ease;">
+        <input type="radio" name="difficulty" value="easy" checked style="accent-color: var(--ink, #4b3a68); transform: scale(1.2); margin-right: 8px;">
+        <strong style="color: var(--ink, #4b3a68); font-family: var(--font-pixel, monospace); font-size: 1.05rem;">Easy Mode</strong>
+        <div style="color: var(--ink-soft, #6f5e8c); font-size: 0.85rem; margin-top: 4px; padding-left: 28px;">Baby Creeper &amp; Standard Judge Questions</div>
+      </label>
+  
+      <label style="display: block; background: var(--white, #ffffff); border: 3px solid var(--ink, #4b3a68); padding: 14px; cursor: pointer; box-shadow: 4px 4px 0px var(--ink, #4b3a68); transition: transform 0.1s ease;">
+        <input type="radio" name="difficulty" value="survival" style="accent-color: var(--ink, #4b3a68); transform: scale(1.2); margin-right: 8px;">
+        <strong style="color: var(--ink, #4b3a68); font-family: var(--font-pixel, monospace); font-size: 1.05rem;">Survival Mode</strong>
+        <div style="color: var(--ink-soft, #6f5e8c); font-size: 0.85rem; margin-top: 4px; padding-left: 28px;">Charged Creeper &amp; Hardcore Questions</div>
+      </label>
+    </div>
+  
+    <button id="start-btn" class="pixel-btn" style="width: 100%; text-align: center; font-size: 1.1rem; padding: 14px;">Start Quest</button>
+  </section>
+
+      <!-- GAMEPLAY SCREEN -->
+      <section id="screen-game" class="retro-window" hidden>
+        <div class="retro-titlebar">
+          <span id="arena-title">HackPanel: Judge Duel</span>
+          <span id="quest-progress" style="font-size: 0.85rem;">Q 1/3</span>
+        </div>
+
+        <!-- Battle Arena Screen -->
+        <div class="retro-screen" style="margin-bottom: 16px;">
+          <!-- HUD Header inside Screen -->
+          <div style="display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 5; margin-bottom: 10px;">
+            <div id="lives-display" style="display: flex; gap: 6px; align-items: center;">
+                <!-- Heart 1 -->
+                <svg width="20" height="18" viewBox="0 0 10 9" shape-rendering="crispEdges">
+                  <path fill="var(--ink, #4b3a68)" d="M1 0h3v1h2V0h3v1h1v3h-1v1h-1v1h-1v1h-1v1h-1v1h-1v-1h-1v-1h-1v-1H2V5H1V4H0V1h1V0z"/>
+                  <path fill="#ef4444" d="M2 1h2v2H2V1zm4 0h2v2H6V1zM1 3h8v1H1V3zm1 2h6v1H2V5zm1 2h4v1H3V7zm1 2h2v1H4V9z"/>
+                </svg>
+                <!-- Heart 2 -->
+                <svg width="20" height="18" viewBox="0 0 10 9" shape-rendering="crispEdges">
+                  <path fill="var(--ink, #4b3a68)" d="M1 0h3v1h2V0h3v1h1v3h-1v1h-1v1h-1v1h-1v1h-1v1h-1v-1h-1v-1h-1v-1H2V5H1V4H0V1h1V0z"/>
+                  <path fill="#ef4444" d="M2 1h2v2H2V1zm4 0h2v2H6V1zM1 3h8v1H1V3zm1 2h6v1H2V5zm1 2h4v1H3V7zm1 2h2v1H4V9z"/>
+                </svg>
+                <!-- Heart 3 -->
+                <svg width="20" height="18" viewBox="0 0 10 9" shape-rendering="crispEdges">
+                  <path fill="var(--ink, #4b3a68)" d="M1 0h3v1h2V0h3v1h1v3h-1v1h-1v1h-1v1h-1v1h-1v1h-1v-1h-1v-1h-1v-1H2V5H1V4H0V1h1V0z"/>
+                  <path fill="#ef4444" d="M2 1h2v2H2V1zm4 0h2v2H6V1zM1 3h8v1H1V3zm1 2h6v1H2V5zm1 2h4v1H3V7zm1 2h2v1H4V9z"/>
+                </svg>
+              </div>
+            <div style="width: 120px; height: 12px; background: var(--ink, #4b3a68); border: 2px solid var(--white, #fff); position: relative; border-radius: 2px;">
+              <div id="boss-health" style="width: 100%; height: 100%; background: #ef4444; transition: width 0.3s;"></div>
+            </div>
+          </div>
+
+          <!-- Characters Container -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; height: 90px; padding: 0 40px; position: relative; z-index: 5;">
+            <div id="avatar" class="pixel-steve"></div>
+            <div id="creeper" class="pixel-creeper"></div>
+          </div>
+          <div class="pixel-ground"></div>
+        </div>
+
+        <!-- Question Box Container -->
+        <div style="background: var(--white, #fff); border: 2px solid var(--ink, #4b3a68); padding: 18px; border-radius: 4px;">
+          <div id="q-category" style="font-size: 0.75rem; color: var(--ink-soft, #6f5e8c); font-weight: bold; text-transform: uppercase; margin-bottom: 6px; font-family: var(--font-pixel, monospace);">Technical Judge</div>
+          <h3 id="q-prompt" style="margin: 0 0 16px 0; font-size: 1.05rem; color: var(--ink, #4b3a68);">Loading question...</h3>
+          <div id="options-grid">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- RESULT SCREEN -->
+      <section id="screen-result" class="retro-window" hidden style="text-align: center;">
+        <div class="retro-titlebar">
+          <span id="result-header">Quest Result</span>
+        </div>
+        <div style="background: var(--white, #fff); border: 2px solid var(--ink, #4b3a68); padding: 24px; margin-bottom: 16px; border-radius: 4px;">
+          <h2 id="result-title" style="margin-top: 0; color: var(--ink, #4b3a68);">Quest Over</h2>
+          <div id="result-body" style="font-size: 0.95rem; color: var(--ink, #4b3a68); line-height: 1.5;"></div>
+        </div>
+        <div style="display: flex; gap: 12px; justify-content: center;">
+          <button id="again-btn" class="pixel-btn">Play Again</button>
+          <a href="/games" class="pixel-btn" style="text-decoration: none; display: inline-block; line-height: normal; padding-top: 10px;">Back to Quests</a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <%- include('partials/footer') %>
+  <script src="/js/judging.js"></script>
+</body>
+</html>

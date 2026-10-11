@@ -1,0 +1,74 @@
+{
+    "easy": {
+      "levelName": "Easy Mode (Chill Sandbox)",
+      "creeperName": "Baby Creeper",
+      "questions": [
+        {
+          "id": 1,
+          "category": "Technical Judge",
+          "prompt": "Alex (Tech Lead) asks: 'What is the simplest way to serve your frontend and static files locally in Node.js?'",
+          "options": [
+            { "text": "Use Express static middleware (express.static('public')).", "correct": true },
+            { "text": "Manually read every single image byte-by-byte in a custom loop.", "correct": false },
+            { "text": "Compile a brand new binary kernel every time a page loads.", "correct": false }
+          ]
+        },
+        {
+          "id": 2,
+          "category": "Business Judge",
+          "prompt": "Sarah (Venture Partner) asks: 'For a hackathon MVP, what is your primary focus for the target audience?'",
+          "options": [
+            { "text": "Targeting 50 million enterprise clients globally on day one.", "correct": false },
+            { "text": "Solving one core pain point for a specific user group cleanly.", "correct": true },
+            { "text": "Ignoring users entirely and building custom background graphics.", "correct": false }
+          ]
+        },
+        {
+          "id": 3,
+          "category": "Pitch Follow-up",
+          "prompt": "Final Judge Panel: 'What happens if your external API goes down during your live presentation?'",
+          "options": [
+            { "text": "Panic and shut down the computer.", "correct": false },
+            { "text": "Have local fallback JSON data configured to seamlessly rescue the demo.", "correct": true },
+            { "text": "Blame the hackathon Wi-Fi router.", "correct": false }
+          ]
+        }
+      ]
+    },
+    "survival": {
+      "levelName": "Survival Mode (Hardcore Judges)",
+      "creeperName": "Charged Creeper",
+      "questions": [
+        {
+          "id": 1,
+          "category": "Technical Judge",
+          "prompt": "Alex (Tech Lead) asks: 'How do you handle high-frequency API traffic spikes and avoid rate limits?'",
+          "options": [
+            { "text": "Send thousands of requests synchronously on every button click.", "correct": false },
+            { "text": "Implement a race timeout mechanism with fallback data caching.", "correct": true },
+            { "text": "Disable the server entirely when traffic increases.", "correct": false }
+          ]
+        },
+        {
+          "id": 2,
+          "category": "Business Judge",
+          "prompt": "Sarah (Venture Partner) asks: 'What is your monetization or sustainability strategy long-term?'",
+          "options": [
+            { "text": "Freemium tiered subscription model with rate limits for heavy users.", "correct": true },
+            { "text": "Rely on infinite free cloud tier credits that never expire.", "correct": false },
+            { "text": "Charge users five dollars every time they view a page.", "correct": false }
+          ]
+        },
+        {
+          "id": 3,
+          "category": "Pitch Follow-up",
+          "prompt": "Final Judge Panel: 'Why should we award you the grand prize over everyone else?'",
+          "options": [
+            { "text": "Because our architecture is resilient, tested, and presentation-ready.", "correct": true },
+            { "text": "Because we didn't test our app at all.", "correct": false },
+            { "text": "Because we spent all our time on custom fonts.", "correct": false }
+          ]
+        }
+      ]
+    }
+  }
