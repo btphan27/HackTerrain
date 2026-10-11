@@ -6,6 +6,8 @@
         <p>Find people who are looking for a team. Matches are ranked by shared hackathons, skills, school, and major.</p>
       </div>
 
+      <%- include('partials/team-tabs', { tab: 'people' }) %>
+
       <% if (locals.me && locals.me.looking_for_team) { %>
       <p class="notice">You're listed as looking for a team. <a href="/settings/team">Edit your team settings</a></p>
       <% } else { %>
@@ -42,26 +44,35 @@
       <% } else { %>
       <p class="hint">Highlighted skills are ones you share.</p>
       <div class="grid">
-        <% matches.forEach((m) => { %>
-        <article class="card">
-          <div class="card-head">
-            <%- avatarHtml(m.avatar, m.picture, m.display_name || m.username, 'avatar-sm') %>
-            <h3><a href="/u/<%= encodeURIComponent(m.username) %>"><%= m.display_name || m.username %></a></h3>
+        <% matches.forEach((m) => { const shownName = (m.display_name && !m.display_name.includes('@')) ? m.display_name : m.username; %>
+        <article class="card mate">
+          <div class="mate-top">
+            <%- avatarHtml(m.avatar, m.picture, shownName, 'avatar-md') %>
+            <div class="mate-who">
+              <h3><a href="/u/<%= encodeURIComponent(m.username) %>"><%= shownName %></a></h3>
+              <p class="mate-handle">@<%= m.username %></p>
+              <% if (m.distance !== null) { %><span class="mate-chip">~<%= m.distance %> mi away</span><% } %>
+            </div>
           </div>
-          <p class="meta">@<%= m.username %><% if (m.distance !== null) { %> &bull; about <%= m.distance %> miles away<% } %></p>
-          <% const where = [m.school, m.major, m.city].filter(Boolean).join(' / '); %>
-          <% if (where) { %><p class="meta"><%= where %></p><% } %>
-          <% if (m.experience) { %><p><%= m.experience %></p><% } %>
-          <% if (m.roles.length) { %><p><strong>Roles:</strong> <%= m.roles.map((r) => r.split(' (')[0]).join(', ') %></p><% } %>
-          <% if (m.sharedHackathons.length) { %><p><strong>Also going to:</strong> <%= m.sharedHackathons.join(', ') %></p><% } %>
-          <% if (m.sameSchool) { %><p class="meta">Same school as you</p><% } %>
-          <% if (m.skills.length) { %>
-          <div class="tag-row">
-            <% m.skills.forEach((s) => { %><span class="tag<%- m.sharedSkills.includes(s) ? ' tag-honey' : '' %>"><%= s %></span><% }) %>
+          <div class="mate-body">
+            <% if (m.school) { %><p class="mate-row"><span class="mate-ico" aria-hidden="true">&#127979;</span><span><%= m.school %><% if (m.major) { %> &middot; <%= m.major %><% } %></span></p><% } %>
+            <% if (m.city) { %><p class="mate-row"><span class="mate-ico" aria-hidden="true">&#128205;</span><span><%= m.city %></span></p><% } %>
+            <% if (m.experience) { %><p class="mate-row"><span class="mate-ico" aria-hidden="true">&#127942;</span><span><%= m.experience %></span></p><% } %>
+            <% if (m.roles.length) { %><p class="mate-row"><span class="mate-ico" aria-hidden="true">&#128736;</span><span><%= m.roles.map((r) => r.split(' (')[0]).join(', ') %></span></p><% } %>
+            <% if (m.sharedGoing.length) { %><p class="mate-row"><span class="mate-ico" aria-hidden="true">&#127919;</span><span>Also going to <%= m.sharedGoing.join(', ') %></span></p><% } %>
+            <% if (m.sharedInterested.length) { %><p class="mate-row"><span class="mate-ico" aria-hidden="true">&#11088;</span><span>Also interested in <%= m.sharedInterested.join(', ') %></span></p><% } %>
+            <% if (m.sameSchool) { %><p class="mate-badge">Same school as you</p><% } %>
+            <% if (m.skills.length) { %>
+            <div class="tag-row">
+              <% m.skills.forEach((s) => { %><span class="tag<%- m.sharedSkills.includes(s) ? ' tag-honey' : '' %>"><%= s %></span><% }) %>
+            </div>
+            <% } %>
           </div>
-          <% } %>
-          <% if (m.discord) { %><p><strong>Discord:</strong> <%= m.discord %></p><% } %>
-          <a class="btn btn-dark" href="/u/<%= encodeURIComponent(m.username) %>">View profile</a>
+          <div class="mate-foot">
+            <% if (m.discord) { %><span class="mate-discord" title="Discord"><%- include('partials/discord-icon') %> <%= m.discord %></span><% } %>
+            <a class="btn btn-dark" href="/u/<%= encodeURIComponent(m.username) %>">View profile</a>
+            <a class="btn" href="/teams/invite/<%= encodeURIComponent(m.username) %>">Invite to team</a>
+          </div>
         </article>
         <% }) %>
       </div>

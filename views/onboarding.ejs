@@ -94,8 +94,8 @@
         <%- include('partials/skill-picker', { skillList: options.skills, selected: profile.skills || [], custom: profile.custom_skills || '' }) %>
 
         <% } else if (step === 5) { %>
-        <p class="hint">Pick up to 3. We'll use these to match you with other people heading there.</p>
-        <%- include('partials/hack-picker', { hackathons: options.hackathons, hasLocation: options.hasLocation, regions: options.regions, tags: options.tags, selected: (profile.hackathons || []).map((h) => h.id) }) %>
+        <p class="hint">Pick up to 5 and mark each one Interested or Going. We'll use these to match you with other people heading there.</p>
+        <%- include('partials/hack-picker', { hackathons: options.hackathons, hasLocation: options.hasLocation, regions: options.regions, tags: options.tags, selected: (profile.hackathons || []).map((h) => h.id), statuses: Object.fromEntries((profile.hackathons || []).map((h) => [h.id, h.status])), maxPicks: 5 }) %>
 
         <% } else if (step === 6) { %>
         <label class="choice">

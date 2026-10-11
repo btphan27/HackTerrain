@@ -39,12 +39,12 @@ module.exports = function ({ requireLogin, show }) {
     const looking = req.body.looking_for_team ? 1 : 0;
     const custom = clean(req.body.custom_skills, 400);
     const parsed = t.parseSkills(req.body.skills, custom);
-    const picks = toArray(req.body.hackathons);
+    const picks = t.parsePicks(req.body);
 
     const fail = (error) => {
       const profile = {
         ...t.getProfile(sub), school, major, city, discord, looking_for_team: looking,
-        skills: parsed.skills, custom_skills: custom, hackathons: picks.map((id) => ({ id })),
+        skills: parsed.skills, custom_skills: custom, hackathons: picks,
       };
       res.status(400);
       show(res, "team-settings", { profile, allSkills: t.SKILLS, error, ...pickerData(req.profile) });
@@ -54,9 +54,9 @@ module.exports = function ({ requireLogin, show }) {
       return fail(`Couldn't use these skills: ${parsed.rejected.join(", ")}. Use letters, numbers and + # . / & ( ) - (30 characters max).`);
     }
     if (parsed.tooMany) return fail("You can add at most 10 custom skills.");
-    if (picks.length > 3) return fail("Pick at most 3 hackathons.");
+    if (picks.length > t.MAX_PICKS) return fail("Pick at most " + t.MAX_PICKS + " hackathons.");
     const validIds = new Set(t.listHackathons().map((h) => h.id));
-    if (!picks.every((id) => validIds.has(id))) return fail("One of those hackathons is no longer available.");
+    if (!picks.every((p) => validIds.has(p.id))) return fail("One of those hackathons is no longer available.");
     if (discord && (!/^[a-z0-9_.]{2,32}$/.test(discord) || discord.includes(".."))) {
       return fail("Discord usernames are 2-32 characters: lowercase letters, numbers, underscores, periods.");
     }
@@ -79,9 +79,7 @@ module.exports = function ({ requireLogin, show }) {
       const addSkill = db.prepare("INSERT INTO user_skills (sub, skill) VALUES (?, ?)");
       parsed.skills.forEach((x) => addSkill.run(sub, x));
 
-      db.prepare("DELETE FROM user_hackathons WHERE sub = ?").run(sub);
-      const addHack = db.prepare("INSERT INTO user_hackathons (sub, hackathon_id) VALUES (?, ?)");
-      picks.forEach((id) => addHack.run(sub, id));
+      t.savePicks(sub, picks, [...validIds]);
     })();
 
     res.redirect("/u/" + req.profile.username);

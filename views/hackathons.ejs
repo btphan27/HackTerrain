@@ -5,7 +5,7 @@
   const FORMAT_LABELS = { 'in-person': 'In person', online: 'Online', hybrid: 'Hybrid' };
   const tagLabel = (id) => (tags.find((x) => x.id === id) || {}).label || id;
   const isFiltering = !!(filters.q || filters.region || filters.format || filters.month || filters.tag || filters.radius);
-  const safeUrl = (u) => (u && /^https?:\/\//i.test(u) ? u : '');
+  const safeUrl = (u) => (u && (/^https?:\/\//i.test(u) || /^\/e\/[a-z0-9-]+$/.test(u)) ? u : '');
 %>
   <main id="main">
     <div class="container">
@@ -78,10 +78,11 @@
           <p class="meta"><%= h.dates || 'Dates TBA' %> &bull; <%= h.location || (h.format === 'online' ? 'Online' : 'Location TBA') %></p>
           <% if (h.distance !== null) { %><p class="meta"><%= h.distance %> miles from you</p><% } %>
           <div class="tag-row">
+            <% if (h.source === 'hosted') { %><span class="tag hosted-badge">Hosted here</span><% } %>
             <% if (h.format) { %><span class="tag"><%= FORMAT_LABELS[h.format] || h.format %></span><% } %>
             <% h.tags.forEach((id) => { %><span class="tag tag-honey"><%= tagLabel(id) %></span><% }) %>
           </div>
-          <% if (safeUrl(h.url)) { %><a class="btn btn-dark" href="<%= safeUrl(h.url) %>" target="_blank" rel="noopener noreferrer">View details</a><% } %>
+          <% if (safeUrl(h.url)) { %><% if (h.source === 'hosted') { %><a class="btn btn-dark" href="<%= safeUrl(h.url) %>">View event page</a><% } else { %><a class="btn btn-dark" href="<%= safeUrl(h.url) %>" target="_blank" rel="noopener noreferrer">View details</a><% } %><% } %>
         </article>
         <% }) %>
       </div>

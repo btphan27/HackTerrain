@@ -1,0 +1,32 @@
+<%- include('partials/header', { title: editing ? 'Edit team' : 'Create a team', description: 'Start a team for a hackathon.', active: 'teammates' }) %>
+  <main id="main">
+    <div class="container narrow">
+      <div class="page-title">
+        <h1><%= editing ? 'Edit your team' : 'Create a team' %></h1>
+        <p>People can find your team and ask to join, or you can invite them from Team Finder.</p>
+      </div>
+      <% if (error) { %><p class="form-error" role="alert"><%= error %></p><% } %>
+      <form method="post" action="<%= editing ? '/teams/' + team.id + '/edit' : '/teams' %>">
+        <fieldset>
+          <legend>Team</legend>
+          <p><label>Team name<br><input type="text" name="name" maxlength="50" required value="<%= team.name || '' %>"></label></p>
+          <p><label>Hackathon<br>
+            <select name="hackathon_id">
+              <option value="">Not decided yet</option>
+              <% hackathons.forEach((h) => { %><option value="<%= h.id %>"<%- team.hackathon_id === h.id ? ' selected' : '' %>><%= h.name %> (<%= h.dates || 'Dates TBA' %>)</option>
+              <% }) %>
+            </select></label></p>
+          <p><label>Team size (including you)<br>
+            <select name="max_size"><% [2, 3, 4, 5, 6, 8].forEach((n) => { %><option value="<%= n %>"<%- Number(team.max_size) === n ? ' selected' : '' %>><%= n %> people</option><% }) %></select></label></p>
+          <p><label>About your team<br><textarea name="description" rows="4" maxlength="600" placeholder="What do you want to build? What's your plan?"><%= team.description || '' %></textarea></label></p>
+          <p><label>Skills you're looking for<br><input type="text" name="wanted" maxlength="300" value="<%= team.wanted || '' %>" placeholder="python, ui/ux design, product/pitching"></label></p>
+          <% if (editing) { %><p><label class="check"><input type="checkbox" name="open" value="1"<%- Number(team.open) ? ' checked' : '' %>> Open to join requests</label></p><% } %>
+        </fieldset>
+        <p class="btn-row">
+          <button class="btn" type="submit"><%= editing ? 'Save changes' : 'Create team' %></button>
+          <a class="btn btn-dark" href="<%= editing ? '/teams/' + team.id : '/teams/mine' %>">Cancel</a>
+        </p>
+      </form>
+    </div>
+  </main>
+<%- include('partials/footer') %>

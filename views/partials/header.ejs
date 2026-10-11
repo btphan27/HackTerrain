@@ -29,7 +29,7 @@
         <ul class="nav-list">
           <li><a href="/games"<%- cur("quests") %>>Quests</a></li>
           <li><a href="/hackathons"<%- cur("hackathons") %>>Hackathons</a></li>
-          <li><a href="/teammates"<%- cur("teammates") %>>Team Finder</a></li>
+          <li><a href="/teammates"<%- cur("teammates") %>>Team Finder<% if (locals.teamBadge) { %> <span class="nav-badge" aria-label="<%= teamBadge %> waiting for you"><%= teamBadge %></span><% } %></a></li>
           <li><a href="/terrain"<%- cur("terrain") %>>My World</a></li>
           <li><a href="/host"<%- cur("host") %>>Launch Your Hackathon</a></li>
           <% if (_loggedIn) { %>

@@ -1,0 +1,32 @@
+<%- include('partials/header', { title: 'Register for ' + ev.name, description: 'Sign up for ' + ev.name, active: 'hackathons' }) %>
+  <main id="main">
+    <div class="container narrow">
+      <p class="ev-back"><a href="/e/<%= ev.slug %>">&larr; Back to <%= ev.name %></a></p>
+      <div class="page-title">
+        <h1>Register</h1>
+        <p><strong><%= ev.name %></strong><br><%= ev.dates %><% if (ev.location) { %> &bull; <%= ev.location %><% } %></p>
+      </div>
+
+      <% if (done === 'registered') { %><p class="notice" role="status">You're registered! It's saved under Attending on your profile.</p><% } %>
+      <% if (done === 'cancelled') { %><p class="notice" role="status">Your registration was cancelled.</p><% } %>
+
+      <% if (registered) { %>
+        <p>You're signed up for this hackathon.</p>
+        <form method="post" action="/e/<%= ev.slug %>/register"><input type="hidden" name="action" value="cancel">
+          <p class="btn-row"><button class="btn btn-dark" type="submit">Cancel my registration</button>
+          <a class="btn" href="/teams/new?hackathon=hosted-<%= ev.id %>">Start a team for this hackathon</a></p></form>
+      <% } else { %>
+        <div class="panel">
+          <h2>What the host will see</h2>
+          <p>When you register, the host of this hackathon can see your name, username, email<% if (me.school) { %>, school<% } %> and Discord handle (if you added one).</p>
+          <ul class="plain-list">
+            <li><strong>Name:</strong> <%= me.display_name || me.username %></li>
+            <li><strong>Username:</strong> @<%= me.username %></li>
+            <li><strong>Email:</strong> <%= me.email || 'none on file' %></li>
+          </ul>
+        </div>
+        <form method="post" action="/e/<%= ev.slug %>/register"><p><button class="btn" type="submit">Register for <%= ev.name %></button></p></form>
+      <% } %>
+    </div>
+  </main>
+<%- include('partials/footer') %>

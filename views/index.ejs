@@ -88,7 +88,7 @@
               <h3><%= h.name %></h3>
               <p class="meta"><%= h.dates %> &bull; <%= h.location || "Online" %></p>
               <% if (formatLabel(h.format)) { %><span class="tag"><%= formatLabel(h.format) %></span><% } %>
-              <a class="btn btn-dark" href="<%= h.url %>" target="_blank" rel="noopener noreferrer">View details</a>
+              <% if (h.source === 'hosted') { %><a class="btn btn-dark" href="<%= h.url %>">View event page</a><% } else { %><a class="btn btn-dark" href="<%= h.url %>" target="_blank" rel="noopener noreferrer">View details</a><% } %>
             </article>
           <% }) %>
           <% if (!upcoming.length) { %><p>No upcoming hackathons are loaded right now. Check back soon.</p><% } %>

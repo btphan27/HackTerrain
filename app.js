@@ -76,6 +76,7 @@ app.use((req, res, next) => {
   res.locals.user = req.oidc.user || null;
   if (req.oidc.user) req.profile = getOrCreateUser(req.oidc.user);
   res.locals.me = req.profile || null;
+  res.locals.teamBadge = req.profile ? require("./teamup").pendingCount(req.profile.sub) : 0;
   res.locals.terrainDev = !PRODUCTION && process.env.TERRAIN_DEV === "true"; // never on a live site
   // small helpers the templates use to print hackathon formats and types
   res.locals.PixelAvatar = Avatar;
@@ -119,7 +120,6 @@ app.get("/", (req, res) => show(res, "index", { upcoming: teamdata.listHackathon
 // Pages from the design (static content for now)
 app.get("/games", (req, res) => show(res, "games", { topics: require("./services/challenges").TOPICS.map(({ id, name }) => ({ id, name })) }));
 app.get("/quests", (req, res) => res.redirect("/games")); // the new design calls games "quests"
-app.get("/host", (req, res) => show(res, "host"));
 app.get("/dashboard", requireLogin, (req, res) => show(res, "dashboard", { stats: require("./db").getStats(req.profile.sub) }));
 app.get("/about", (req, res) => show(res, "about"));
 app.get("/info", (req, res) => show(res, "info"));
@@ -130,6 +130,8 @@ app.use(require("./routes/onboarding")({ requireLogin, show }));
 app.use(require("./routes/profile")({ requireLogin, show }));
 app.use(require("./routes/teams")({ requireLogin, show }));
 app.use(require("./routes/terrain")({ requireLogin, show }));
+app.use(require("./routes/events")({ requireLogin, show }));
+app.use(require("./routes/teamup")({ requireLogin, show }));
 app.use(require("./routes/challenges")({ requireLogin }));
 require("./hackathons").startSync();
 

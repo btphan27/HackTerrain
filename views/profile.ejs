@@ -25,11 +25,15 @@
             <span class="tag tag-honey">Level <%= stats.level %> &bull; <%= stats.rank %></span>
             <% if (profile.looking_for_team) { %><span class="tag">Looking for a team</span><% } %>
           </div>
+          <% if (!isOwner && locals.me) { %>
+          <div class="form-actions"><a class="btn" href="/teams/invite/<%= encodeURIComponent(profile.username) %>">Invite to my team</a></div>
+          <% } %>
           <% if (isOwner) { %>
           <div class="form-actions">
             <a class="btn" href="/settings">Edit profile</a>
             <a class="btn btn-dark" href="/settings/team">Team settings</a>
             <a class="btn btn-dark" href="/onboarding/1">Retake survey</a>
+            <a class="btn btn-dark" href="/teams/mine">My teams</a>
             <a class="btn btn-dark" href="/terrain">My world</a>
             <a class="btn btn-dark" href="/dashboard">Dashboard</a>
           </div>
@@ -57,7 +61,7 @@
           </dl>
           <% } else { %><p class="hint">Nothing here yet.</p><% } %>
           <% if (profile.discord) { %>
-          <p><strong>Discord:</strong> <%= profile.discord %></p>
+          <p class="discord-line"><%- include('partials/discord-icon') %> <strong>Discord:</strong> <%= profile.discord %></p>
           <% } else if (!locals.me && profile.looking_for_team) { %>
           <p class="hint"><a href="/login">Log in</a> to see their Discord.</p>
           <% } %>
@@ -74,15 +78,24 @@
 
         <section class="panel">
           <h2>Hackathons</h2>
-          <% if (hackathons.length) { %>
-          <ul class="plain-list">
-            <% hackathons.forEach((h) => { %>
-            <li>
-              <% if (safeUrl(h.url)) { %><a href="<%= safeUrl(h.url) %>" target="_blank" rel="noopener noreferrer"><strong><%= h.name %></strong></a><% } else { %><strong><%= h.name %></strong><% } %>
-              <br><small><%= h.dates %></small>
-            </li>
+          <%
+            const hackLink = (h) => { const u = h.url || ''; return (/^https?:\/\//i.test(u) || /^\/e\/[a-z0-9-]+$/.test(u)) ? u : ''; };
+            const groups = [['Attending', hackGroups.attending], ['Attended', hackGroups.attended], ['Interested', hackGroups.interested]].filter((g) => g[1].length);
+          %>
+          <% if (groups.length) { %>
+          <div class="hack-group">
+            <% groups.forEach((g) => { %>
+            <h3><%= g[0] %></h3>
+            <ul class="plain-list">
+              <% g[1].forEach((h) => { %>
+              <li>
+                <% if (hackLink(h)) { %><a href="<%= hackLink(h) %>"<%- h.source === 'hosted' ? '' : ' target="_blank" rel="noopener noreferrer"' %>><strong><%= h.name %></strong></a><% } else { %><strong><%= h.name %></strong><% } %>
+                <br><small><%= h.dates %></small>
+              </li>
+              <% }) %>
+            </ul>
             <% }) %>
-          </ul>
+          </div>
           <% } else { %><p class="hint">No hackathons picked yet.</p><% } %>
         </section>
 

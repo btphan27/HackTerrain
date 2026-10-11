@@ -1,0 +1,13 @@
+<%# Expects: team, and optionally mineIds (Set of team ids the viewer is on) %>
+<article class="card team-card">
+  <h3><a href="/teams/<%= team.id %>"><%= team.name %></a></h3>
+  <p class="meta"><% if (team.hackathon) { %>For <%= team.hackathon.name %> &bull; <%= team.hackathon.dates %><% } else { %>Not tied to a hackathon yet<% } %></p>
+  <div class="team-faces" aria-label="<%= team.size %> of <%= team.max_size %> spots filled">
+    <% team.members.forEach((m) => { %><span title="@<%= m.username %>"><%- avatarHtml(m.avatar, m.picture, m.display_name || m.username, 'avatar-xs') %></span><% }) %>
+    <% for (let i = team.size; i < team.max_size; i++) { %><span class="face-empty" aria-hidden="true">+</span><% } %>
+    <small><%= team.size %> / <%= team.max_size %></small>
+  </div>
+  <% if (team.description) { %><p class="team-desc"><%= team.description.length > 140 ? team.description.slice(0, 140) + '...' : team.description %></p><% } %>
+  <% if (team.wantedList.length) { %><p class="meta">Looking for:</p><div class="tag-row"><% team.wantedList.forEach((s) => { %><span class="tag tag-honey"><%= s %></span><% }) %></div><% } %>
+  <a class="btn btn-dark" href="/teams/<%= team.id %>"><%= locals.mineIds && mineIds.has(team.id) ? 'Open team' : 'View team' %></a>
+</article>

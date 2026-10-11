@@ -60,6 +60,8 @@ const ensureCol = (table, name, def) => {
   ["last_seen", "TEXT"],
 ].forEach(([n, d]) => ensureCol("hackathons", n, d));
 
+ensureCol("user_hackathons", "status", "TEXT DEFAULT 'interested'"); // 'interested' or 'going'
+
 // The catalog is now automatic. Remove the old hand-typed placeholder events and picks of them.
 db.exec(`
 DELETE FROM user_hackathons WHERE hackathon_id IN (SELECT id FROM hackathons WHERE source = 'manual');
@@ -102,11 +104,38 @@ const label = (list, id) => (list.find((x) => x.id === id) || {}).label || "";
 const getSkills = (sub) =>
   db.prepare("SELECT skill FROM user_skills WHERE sub = ? ORDER BY skill").all(sub).map((r) => r.skill);
 
+const todayIso = () => new Date().toISOString().slice(0, 10);
 const getHackathons = (sub) =>
   db.prepare(
-    `SELECT h.id, h.name, h.url, h.dates FROM user_hackathons uh
-     JOIN hackathons h ON h.id = uh.hackathon_id WHERE uh.sub = ?`
-  ).all(sub);
+    `SELECT h.id, h.name, h.url, h.dates, h.source, h.ends_on, h.starts_on, uh.status FROM user_hackathons uh
+     JOIN hackathons h ON h.id = uh.hackathon_id WHERE uh.sub = ? ORDER BY COALESCE(h.starts_on, '9999-12-31'), h.name`
+  ).all(sub).map((h) => ({ ...h, status: h.status === "going" ? "going" : "interested", ended: !!(h.ends_on && h.ends_on < todayIso()) }));
+
+// "Attending" = going and not over yet, "Attended" = going and over, "Interested" = the rest
+const groupHackathons = (list) => ({
+  attending: list.filter((h) => h.status === "going" && !h.ended),
+  attended: list.filter((h) => h.status === "going" && h.ended),
+  interested: list.filter((h) => h.status !== "going"),
+});
+
+// Reads the picker fields: hackathons = ticked ids, status_<id> = "going" or "interested"
+const MAX_PICKS = 5;
+function parsePicks(body) {
+  const ids = body.hackathons === undefined ? [] : Array.isArray(body.hackathons) ? body.hackathons : [body.hackathons];
+  return [...new Set(ids.map(String))].map((id) => ({ id, status: body["status_" + id] === "going" ? "going" : "interested" }));
+}
+// Replaces the picks for the hackathons the picker shows (activeIds). Older events (attended) are left alone.
+function savePicks(sub, picks, activeIds) {
+  const del = db.prepare("DELETE FROM user_hackathons WHERE sub = ? AND hackathon_id = ?");
+  (activeIds || []).forEach((id) => del.run(sub, id));
+  const add = db.prepare("INSERT OR REPLACE INTO user_hackathons (sub, hackathon_id, status) VALUES (?, ?, ?)");
+  picks.forEach((p) => add.run(sub, p.id, p.status));
+}
+function setHackathonStatus(sub, hackathonId, status) {
+  if (!status) return db.prepare("DELETE FROM user_hackathons WHERE sub = ? AND hackathon_id = ?").run(sub, hackathonId);
+  const st = status === "going" ? "going" : "interested";
+  db.prepare("INSERT INTO user_hackathons (sub, hackathon_id, status) VALUES (?, ?, ?) ON CONFLICT(sub, hackathon_id) DO UPDATE SET status = excluded.status").run(sub, hackathonId, st);
+}
 
 // ---------- Hackathon catalog ----------
 const REGIONS = [
@@ -132,7 +161,7 @@ function listHackathons(filters = {}, near = null) {
   const rows = db
     .prepare(
       `SELECT * FROM hackathons
-       WHERE last_seen >= datetime('now', '-10 days') AND (ends_on IS NULL OR ends_on >= ?)
+       WHERE (last_seen >= datetime('now', '-10 days') OR source = 'hosted') AND (ends_on IS NULL OR ends_on >= ?)
        ORDER BY COALESCE(starts_on, '9999-12-31'), name`
     )
     .all(cutoff);
@@ -144,6 +173,7 @@ function listHackathons(filters = {}, near = null) {
   for (const r of rows) {
     const h = {
       id: r.id,
+      source: r.source,
       name: r.name,
       url: r.url,
       dates: r.dates,
@@ -257,7 +287,10 @@ function findTeammates(meSub, { radius, skill } = {}) {
 
     const sharedSkills = p.skills.filter((s) => me.skills.includes(s));
     const myHackIds = me.hackathons.map((h) => h.id);
-    const sharedHackathons = p.hackathons.filter((h) => myHackIds.includes(h.id)).map((h) => h.name);
+    const overlap = p.hackathons.filter((h) => myHackIds.includes(h.id));
+    const sharedHackathons = overlap.map((h) => h.name);
+    const sharedGoing = overlap.filter((h) => h.status === "going").map((h) => h.name);
+    const sharedInterested = overlap.filter((h) => h.status !== "going").map((h) => h.name);
     const sameSchool = !!me.school && me.school.toLowerCase() === p.school.toLowerCase();
     const sameMajor = !!me.major && me.major.toLowerCase() === p.major.toLowerCase();
 
@@ -279,6 +312,8 @@ function findTeammates(meSub, { radius, skill } = {}) {
       skills: p.skills,
       sharedSkills,
       sharedHackathons,
+      sharedGoing,
+      sharedInterested,
       sameSchool,
       sameMajor,
       distance: distance === null ? null : Math.max(5, Math.round(distance / 5) * 5), // rounded for privacy
@@ -288,4 +323,4 @@ function findTeammates(meSub, { radius, skill } = {}) {
   return results.sort((a, b) => b.score - a.score);
 }
 
-module.exports = { REGIONS, HACK_TAGS, regionOf, normalizeSkill, parseSkills, EXPERIENCE, ROLES, GOALS, label, SKILLS, getSkills, getHackathons, listHackathons, getProfile, geocode, findTeammates };
+module.exports = { REGIONS, HACK_TAGS, regionOf, normalizeSkill, parseSkills, EXPERIENCE, ROLES, GOALS, label, SKILLS, getSkills, getHackathons, groupHackathons, parsePicks, savePicks, setHackathonStatus, MAX_PICKS, listHackathons, getProfile, geocode, findTeammates };

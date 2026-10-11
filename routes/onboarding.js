@@ -90,18 +90,15 @@ const handlers = {
     return {};
   },
 
-  // 5: up to 3 hackathons they're interested in
+  // 5: hackathons they're interested in or going to
   5: (req) => {
-    const picks = toArray(req.body.hackathons);
-    const draft = { hackathons: picks.map((id) => ({ id })) };
-    if (picks.length > 3) return { draft, error: "Pick at most 3 hackathons." };
-    const valid = new Set(t.listHackathons().map((h) => h.id));
-    if (!picks.every((id) => valid.has(id))) return { draft, error: "One of those hackathons is no longer available." };
-    db.transaction(() => {
-      db.prepare("DELETE FROM user_hackathons WHERE sub = ?").run(req.profile.sub);
-      const add = db.prepare("INSERT INTO user_hackathons (sub, hackathon_id) VALUES (?, ?)");
-      picks.forEach((id) => add.run(req.profile.sub, id));
-    })();
+    const picks = t.parsePicks(req.body);
+    const draft = { hackathons: picks };
+    if (picks.length > t.MAX_PICKS) return { draft, error: "Pick at most " + t.MAX_PICKS + " hackathons." };
+    const active = t.listHackathons().map((h) => h.id);
+    const valid = new Set(active);
+    if (!picks.every((p) => valid.has(p.id))) return { draft, error: "One of those hackathons is no longer available." };
+    db.transaction(() => t.savePicks(req.profile.sub, picks, active))();
     return {};
   },
 

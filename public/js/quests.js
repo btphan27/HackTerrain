@@ -68,7 +68,7 @@
       var strong = document.createElement("strong");
       strong.textContent = "Quest complete! +" + d.points + " points. You earned: " + d.reward.emoji + " " + d.reward.name + " (" + d.reward.rarity + ")";
       var link = document.createElement("a");
-      link.href = "/terrain"; link.textContent = "Place it on your terrain";
+      link.href = "/terrain"; link.textContent = "Place it in your world";
       box.appendChild(strong); box.appendChild(document.createElement("br")); box.appendChild(link);
       show(box, true);
       $("quest-submit").disabled = true;

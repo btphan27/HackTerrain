@@ -183,7 +183,7 @@ const save = (events) => db.transaction(() => events.forEach((e) => upsert.run(e
 
 // Safety net: if nothing is live (first run offline, MLH down or its layout changed), use the bundled copy.
 function useSnapshotIfEmpty() {
-  if (t.listHackathons().length) return;
+  if (t.listHackathons().some((h) => h.source !== "hosted")) return;
   const file = path.join(__dirname, "data", "mlh-snapshot.json");
   if (!fs.existsSync(file)) return console.log("Hackathons: no live events and no snapshot file.");
   const snap = JSON.parse(fs.readFileSync(file, "utf8"));

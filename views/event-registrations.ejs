@@ -1,0 +1,31 @@
+<%- include('partials/header', { title: 'Registrations', description: 'People who registered for ' + ev.name, active: 'host' }) %>
+  <main id="main">
+    <div class="container">
+      <p class="ev-back"><a href="/e/<%= ev.slug %>">&larr; <%= ev.name %></a></p>
+      <div class="page-title">
+        <h1>Registrations</h1>
+        <p><%= rows.length %> <%= rows.length === 1 ? 'person has' : 'people have' %> registered for <strong><%= ev.name %></strong>.</p>
+      </div>
+      <% if (rows.length) { %>
+      <p class="btn-row"><a class="btn" href="/host/<%= ev.id %>/registrations.csv">Download CSV</a></p>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Name</th><th>Username</th><th>Email</th><th>School</th><th>Discord</th><th>Registered</th></tr></thead>
+          <tbody>
+            <% rows.forEach((r) => { %>
+            <tr>
+              <td><%= r.display_name || r.username %></td>
+              <td><a href="/u/<%= encodeURIComponent(r.username) %>">@<%= r.username %></a></td>
+              <td><%= r.email || '' %></td>
+              <td><%= [r.school, r.major].filter(Boolean).join(' / ') %></td>
+              <td><%= r.discord || '' %></td>
+              <td><%= String(r.created_at).slice(0, 10) %></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      <% } else { %><p class="empty">Nobody has registered yet. Share your event page to get sign-ups.</p><% } %>
+    </div>
+  </main>
+<%- include('partials/footer') %>

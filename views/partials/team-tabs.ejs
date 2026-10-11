@@ -1,0 +1,7 @@
+<%# Expects: tab ("people" | "teams" | "mine") %>
+<nav class="team-tabs" aria-label="Team finder sections">
+  <a href="/teammates"<%- tab === 'people' ? ' class="is-current" aria-current="page"' : '' %>>People</a>
+  <a href="/teams"<%- tab === 'teams' ? ' class="is-current" aria-current="page"' : '' %>>Teams</a>
+  <a href="/teams/mine"<%- tab === 'mine' ? ' class="is-current" aria-current="page"' : '' %>>My teams<% if (locals.teamBadge) { %> <span class="nav-badge"><%= teamBadge %></span><% } %></a>
+  <a class="btn" href="/teams/new">Create a team</a>
+</nav>

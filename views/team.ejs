@@ -1,0 +1,119 @@
+<%- include('partials/header', { title: team.name, description: 'A team on HackOrGoHome.', active: 'teammates' }) %>
+  <main id="main">
+    <div class="container">
+      <p class="ev-back"><a href="/teams">&larr; All teams</a></p>
+      <%- include('partials/flash', { flash: flash }) %>
+
+      <div class="page-title team-title">
+        <h1><%= team.name %></h1>
+        <p class="meta">
+          <% if (team.hackathon) { %>For <a href="<%= /^\/e\//.test(team.hackathon.url || '') ? team.hackathon.url : '/hackathons?q=' + encodeURIComponent(team.hackathon.name) %>"><%= team.hackathon.name %></a> &bull; <%= team.hackathon.dates %> &bull; <% } %>
+          <%= team.size %> of <%= team.max_size %> spots filled<% if (!team.open) { %> &bull; closed to requests<% } %>
+        </p>
+        <% if (team.description) { %><p class="team-desc"><%= team.description %></p><% } %>
+        <% if (team.wantedList.length) { %><p class="meta">Looking for:</p><div class="tag-row"><% team.wantedList.forEach((s) => { %><span class="tag tag-honey"><%= s %></span><% }) %></div><% } %>
+      </div>
+
+      <div class="profile-grid">
+        <section class="panel panel-wide">
+          <h2>Members</h2>
+          <ul class="member-list">
+            <% team.members.forEach((m) => { const nm = (m.display_name && !m.display_name.includes('@')) ? m.display_name : m.username; %>
+            <li>
+              <%- avatarHtml(m.avatar, m.picture, nm, 'avatar-md') %>
+              <div class="member-info">
+                <strong><a href="/u/<%= encodeURIComponent(m.username) %>"><%= nm %></a></strong>
+                <span class="meta">@<%= m.username %><% if (m.sub === team.owner_sub) { %> &bull; team lead<% } %></span>
+                <% if (m.school) { %><span class="meta"><%= [m.school, m.major].filter(Boolean).join(' / ') %></span><% } %>
+                <% if (member && m.discord) { %><span class="meta"><%- include('partials/discord-icon') %> <%= m.discord %></span><% } %>
+              </div>
+              <% if (owner && m.sub !== team.owner_sub) { %>
+              <form method="post" action="/teams/<%= team.id %>/kick/<%= encodeURIComponent(m.username) %>" onsubmit="return confirm('Remove @<%= m.username %> from the team?')"><button class="btn btn-dark" type="submit">Remove</button></form>
+              <% } %>
+            </li>
+            <% }) %>
+          </ul>
+          <% if (member) { %><p class="hint">Teammates can see each other's Discord handle. Message them there to get started.</p><% } %>
+        </section>
+
+        <% if (!member) { %>
+        <section class="panel panel-wide">
+          <h2>Join this team</h2>
+          <% if (myPending && myPending.kind === 'invite') { %>
+            <p>The team lead invited you.</p>
+            <div class="host-actions">
+              <form method="post" action="/teams/requests/<%= myPending.id %>/accept"><button class="btn" type="submit">Accept invite</button></form>
+              <form method="post" action="/teams/requests/<%= myPending.id %>/decline"><button class="btn btn-dark" type="submit">Decline</button></form>
+            </div>
+          <% } else if (myPending) { %>
+            <p>You asked to join. The team lead will see your request.</p>
+            <form method="post" action="/teams/requests/<%= myPending.id %>/cancel"><input type="hidden" name="back" value="team"><input type="hidden" name="team_id" value="<%= team.id %>"><button class="btn btn-dark" type="submit">Withdraw request</button></form>
+          <% } else if (team.full) { %>
+            <p class="empty">This team is full.</p>
+          <% } else if (!team.open) { %>
+            <p class="empty">This team isn't taking requests right now.</p>
+          <% } else if (conflict) { %>
+            <p class="empty">You're already on a team for this hackathon.</p>
+          <% } else { %>
+            <form method="post" action="/teams/<%= team.id %>/join">
+              <p><label>Say hi (optional)<br><textarea name="message" rows="3" maxlength="300" placeholder="What can you bring to the team?"></textarea></label></p>
+              <p><button class="btn" type="submit">Ask to join</button></p>
+            </form>
+          <% } %>
+        </section>
+        <% } %>
+
+        <% if (owner) { %>
+        <section class="panel">
+          <h2>Requests</h2>
+          <% const reqs = requests.filter((r) => r.kind === 'request'); const invs = requests.filter((r) => r.kind === 'invite'); %>
+          <% if (!reqs.length) { %><p class="hint">No one is waiting to join.</p><% } %>
+          <ul class="plain-list">
+            <% reqs.forEach((r) => { %>
+            <li>
+              <strong><a href="/u/<%= encodeURIComponent(r.username) %>">@<%= r.username %></a></strong>
+              <% if (r.message) { %><br><small>&ldquo;<%= r.message %>&rdquo;</small><% } %>
+              <div class="host-actions">
+                <form method="post" action="/teams/requests/<%= r.id %>/accept"><button class="btn" type="submit">Accept</button></form>
+                <form method="post" action="/teams/requests/<%= r.id %>/decline"><button class="btn btn-dark" type="submit">Decline</button></form>
+              </div>
+            </li>
+            <% }) %>
+          </ul>
+          <% if (invs.length) { %>
+          <h3>Invites sent</h3>
+          <ul class="plain-list">
+            <% invs.forEach((r) => { %>
+            <li class="sent-row">@<%= r.username %> <span class="meta">waiting</span>
+              <form method="post" action="/teams/requests/<%= r.id %>/cancel"><input type="hidden" name="back" value="team"><input type="hidden" name="team_id" value="<%= team.id %>"><button class="btn btn-dark" type="submit">Cancel</button></form></li>
+            <% }) %>
+          </ul>
+          <% } %>
+        </section>
+
+        <section class="panel">
+          <h2>Invite someone</h2>
+          <% if (team.full) { %><p class="hint">Your team is full.</p><% } else { %>
+          <form method="post" action="/teams/<%= team.id %>/invite">
+            <p><label>Their username<br><input type="text" name="username" maxlength="40" placeholder="@username" required></label></p>
+            <p><button class="btn" type="submit">Send invite</button></p>
+          </form>
+          <p class="hint">Or browse <a href="/teammates">people looking for a team</a> and invite from their card.</p>
+          <% } %>
+        </section>
+        <% } %>
+      </div>
+
+      <% if (member) { %>
+      <p class="btn-row">
+        <% if (owner) { %>
+          <a class="btn" href="/teams/<%= team.id %>/edit">Edit team</a>
+          <form method="post" action="/teams/<%= team.id %>/disband" onsubmit="return confirm('Delete this team for everyone?')"><button class="btn btn-dark" type="submit">Delete team</button></form>
+        <% } else { %>
+          <form method="post" action="/teams/<%= team.id %>/leave" onsubmit="return confirm('Leave this team?')"><button class="btn btn-dark" type="submit">Leave team</button></form>
+        <% } %>
+      </p>
+      <% } %>
+    </div>
+  </main>
+<%- include('partials/footer') %>

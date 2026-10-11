@@ -51,6 +51,7 @@ module.exports = function ({ requireLogin, show }) {
       profile, stats, badges, recent, isOwner,
       skills: t.getSkills(row.sub),
       hackathons: t.getHackathons(row.sub),
+      hackGroups: t.groupHackathons(t.getHackathons(row.sub)),
       terrain: terrain.getSummary(row.sub),
     });
   });

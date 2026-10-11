@@ -1,0 +1,35 @@
+<%- include('partials/header', { title: 'Teams', description: 'Find a team that needs you.', active: 'teammates' }) %>
+  <main id="main">
+    <div class="container">
+      <div class="page-title">
+        <h1>Teams</h1>
+        <p>Teams that still have room. Ask to join one, or start your own.</p>
+      </div>
+      <%- include('partials/team-tabs', { tab: 'teams' }) %>
+      <%- include('partials/flash', { flash: flash }) %>
+
+      <form class="filters" method="get" action="/teams" aria-label="Filter teams">
+        <label>Search
+          <input type="search" name="q" value="<%= filters.q %>" placeholder="Name, skill, hackathon">
+        </label>
+        <label>Hackathon
+          <select name="hackathon">
+            <option value="">Any</option>
+            <% hackathons.forEach((h) => { %><option value="<%= h.id %>"<%- filters.hackathon === h.id ? ' selected' : '' %>><%= h.name %></option>
+            <% }) %>
+          </select>
+        </label>
+        <button class="btn" type="submit">Apply filters</button>
+        <% if (filters.q || filters.hackathon) { %><a class="btn btn-dark" href="/teams">Clear</a><% } %>
+      </form>
+
+      <% if (!teams.length) { %>
+      <p class="empty">No teams with open spots match. <a href="/teams/new">Start one</a> and let people find you.</p>
+      <% } else { %>
+      <div class="grid">
+        <% teams.forEach((team) => { %><%- include('partials/team-card', { team: team, mineIds: mine }) %><% }) %>
+      </div>
+      <% } %>
+    </div>
+  </main>
+<%- include('partials/footer') %>

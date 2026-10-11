@@ -1,0 +1,25 @@
+<%- include('partials/header', { title: 'Invite to a team', description: 'Invite someone to your team.', active: 'teammates' }) %>
+  <main id="main">
+    <div class="container narrow">
+      <div class="page-title">
+        <h1>Invite @<%= target.username %></h1>
+        <p>Pick which of your teams to invite <%= target.display_name && !target.display_name.includes('@') ? target.display_name : '@' + target.username %> to.</p>
+      </div>
+      <%- include('partials/flash', { flash: flash }) %>
+      <% if (!teams.length) { %>
+        <p class="empty">You don't have a team with an open spot. <a href="/teams/new">Create a team</a> first, then come back.</p>
+      <% } else { %>
+      <form method="post" action="/teams/invite/<%= encodeURIComponent(target.username) %>">
+        <fieldset>
+          <legend>Your teams</legend>
+          <% teams.forEach((team, i) => { %>
+          <p><label class="check"><input type="radio" name="team_id" value="<%= team.id %>"<%- i === 0 ? ' checked' : '' %>>
+            <strong><%= team.name %></strong> <span class="meta">(<%= team.size %>/<%= team.max_size %><% if (team.hackathon) { %> &bull; <%= team.hackathon.name %><% } %>)</span></label></p>
+          <% }) %>
+        </fieldset>
+        <p class="btn-row"><button class="btn" type="submit">Send invite</button> <a class="btn btn-dark" href="/teammates">Cancel</a></p>
+      </form>
+      <% } %>
+    </div>
+  </main>
+<%- include('partials/footer') %>

@@ -1,0 +1,69 @@
+<%
+  const prettyTime = (t) => { if (!t) return 'TBA'; const [h, m] = t.split(':').map(Number); return ((h % 12) || 12) + ':' + String(m).padStart(2, '0') + (h < 12 ? ' AM' : ' PM'); };
+  const hostName = host ? ((host.display_name && !host.display_name.includes('@')) ? host.display_name : host.username) : '';
+%>
+<%- include('partials/header', { title: ev.name, description: (ev.description || ('A hackathon on ' + ev.dates)).slice(0, 160), active: 'hackathons' }) %>
+  <main id="main">
+    <div class="container ev-wrap">
+      <p class="ev-back"><a href="/hackathons">&larr; All hackathons</a></p>
+
+      <% if (justPublished) { %>
+      <section class="notice share-box" aria-labelledby="share-h">
+        <h2 id="share-h">Your hackathon is live!</h2>
+        <p>Share this link so people can find your page:</p>
+        <p class="share-row"><input type="text" readonly value="<%= pageUrl %>" aria-label="Event page link"><button class="btn" type="button" data-copy="<%= pageUrl %>">Copy</button></p>
+        <% if (builtIn) { %>
+        <p>You didn't add your own registration link, so we made one for you. People who sign up here show up under Registrations:</p>
+        <p class="share-row"><input type="text" readonly value="<%= registerUrl %>" aria-label="Registration link"><button class="btn" type="button" data-copy="<%= registerUrl %>">Copy</button></p>
+        <% } %>
+      </section>
+      <% } %>
+
+      <article class="lp theme-<%= ev.theme %>" id="event-page">
+        <header class="lp-head">
+          <p class="lp-kicker">Hosted on HackOrGoHome</p>
+          <h1 class="lp-title"><%= ev.name %></h1>
+          <p class="lp-meta"><%= ev.dates %><% if (ev.location) { %>  &bull;  <%= ev.location %><% } %></p>
+          <div class="lp-chips">
+            <% if (formatLabel) { %><span class="lp-chip"><%= formatLabel %></span><% } %>
+            <span class="lp-chip" id="going-count"><%= goingCount %> going</span>
+          </div>
+          <div class="lp-cta">
+            <% if (!builtIn) { %><a class="btn" href="<%= ev.reg_url %>" target="_blank" rel="noopener noreferrer">Register</a>
+            <% } else if (registered) { %><a class="btn" href="/e/<%= ev.slug %>/register">You're registered &#10003;</a>
+            <% } else { %><a class="btn" href="/e/<%= ev.slug %>/register">Register</a><% } %>
+            <% if (me) { %>
+              <button class="btn btn-dark" type="button" data-status-btn="interested" data-id="<%= ev.id %>" aria-pressed="<%= status === 'interested' ? 'true' : 'false' %>"><%= status === 'interested' ? 'Interested \u2713' : 'Interested' %></button>
+              <button class="btn btn-dark" type="button" data-status-btn="going" data-id="<%= ev.id %>" aria-pressed="<%= status === 'going' ? 'true' : 'false' %>"><%= status === 'going' ? "I'm going \u2713" : "I'm going" %></button>
+            <% } else { %>
+              <a class="btn btn-dark" href="/login">Log in to save this event</a>
+            <% } %>
+            <% if (isOwner) { %><a class="btn btn-dark" href="/host/<%= ev.id %>/edit">Edit this page</a><% } %>
+            <% if (isOwner && builtIn) { %><a class="btn btn-dark" href="/host/<%= ev.id %>/registrations">Registrations (<%= regCount %>)</a><% } %>
+          </div>
+          <p class="hint" id="going-msg" role="status" aria-live="polite"></p>
+        </header>
+
+        <div class="lp-body">
+          <% if (ev.description) { %><p class="lp-desc"><%= ev.description %></p><% } %>
+          <% if (ev.schedule.length) { %>
+          <h2>Schedule</h2>
+          <ul class="lp-schedule">
+            <% ev.schedule.forEach((s) => { %><li><span class="lp-time"><%= prettyTime(s.time) %></span><span><%= s.activity %></span></li>
+            <% }) %>
+          </ul>
+          <% } %>
+          <% if (ev.quests.length) { %>
+          <h2>Quests and prizes</h2>
+          <div class="tag-row"><% ev.quests.forEach((q) => { %><span class="tag tag-honey"><%= q %></span><% }) %></div>
+          <% } %>
+          <% if (host) { %>
+          <p class="lp-host">Hosted by <a href="/u/<%= encodeURIComponent(host.username) %>">@<%= host.username %></a>
+            &bull; <a href="/teammates">Find teammates</a></p>
+          <% } %>
+        </div>
+      </article>
+    </div>
+  </main>
+
+<%- include('partials/footer', { scripts: ['/js/event.js'] }) %>
