@@ -121,12 +121,19 @@ function giveBadge(sub, id) {
 }
 
 // Call this from the code that verifies a challenge was really completed
-function award(sub, points, reason) {
+// Pass itemId for a finished quest so it counts toward "Quests completed" (each itemId counts once).
+function award(sub, points, reason, itemId) {
   db.prepare("INSERT INTO activity (sub, points, reason) VALUES (?, ?, ?)").run(sub, points, reason);
+  if (itemId) db.prepare("INSERT OR IGNORE INTO completions (sub, item_id) VALUES (?, ?)").run(sub, itemId);
   const s = getStats(sub);
   if (s.completed >= 1) giveBadge(sub, "first_steps");
   if (s.points >= 100) giveBadge(sub, "century");
   if (s.streak >= 3) giveBadge(sub, "on_fire");
 }
+
+// One-time catch-up: quests finished before completions were recorded still count.
+db.prepare(`INSERT OR IGNORE INTO completions (sub, item_id, completed_at)
+  SELECT sub, 'legacy-' || id, created_at FROM activity
+  WHERE reason LIKE 'Completed a % challenge:%' OR reason LIKE 'Crafted a %for a villager%' OR reason LIKE 'Beat the %in the pitching arena'`).run();
 
 module.exports = { db, getOrCreateUser, getStats, award, giveBadge };

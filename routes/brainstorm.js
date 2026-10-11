@@ -51,7 +51,7 @@ module.exports = function ({ requireLogin, show }) {
   function pay(req, level, id, label) {
     const cfg = LEVELS[level];
     const result = grantReward(req.profile.sub, cfg.reward, `brainstorm-${level}:${id}`);
-    award(req.profile.sub, cfg.points, label);
+    award(req.profile.sub, cfg.points, label, `brainstorm-${level}:${id}`);
     return { reward: result.reward, points: cfg.points };
   }
   const inspiredBy = (r) => ({ title: r.secret.inspo.title, tagline: r.secret.inspo.tagline, real: !!r.secret.inspo.real });

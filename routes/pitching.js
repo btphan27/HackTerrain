@@ -58,7 +58,7 @@ module.exports = function ({ show }) {
     if (won) {
       const cfg = PAY[r.level];
       const result = grantReward(req.profile.sub, cfg.reward, `pitch-${r.level}:${req.params.id}`);
-      award(req.profile.sub, cfg.points, `Beat the ${r.view.creeperName} in the pitching arena`);
+      award(req.profile.sub, cfg.points, `Beat the ${r.view.creeperName} in the pitching arena`, `pitch-${r.level}:${req.params.id}`);
       out.reward = result.reward; out.points = cfg.points;
     }
     if (r.over) out.inspiredBy = { title: r.secret.inspo.title, tagline: r.secret.inspo.tagline, real: !!r.secret.inspo.real };

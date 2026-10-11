@@ -55,7 +55,7 @@ module.exports = function ({ requireLogin }) {
     c.done = true;
     const difficulty = c.full.difficulty;
     const result = grantReward(req.profile.sub, difficulty, "challenge:" + req.params.id);
-    award(req.profile.sub, POINTS[difficulty] || 10, `Completed a ${difficulty} challenge: ${c.full.title}`);
+    award(req.profile.sub, POINTS[difficulty] || 10, `Completed a ${difficulty} challenge: ${c.full.title}`, "challenge:" + req.params.id);
     res.json({ ok: true, reward: result.reward, points: POINTS[difficulty] || 10 });
   });
 
