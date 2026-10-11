@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MVP Quest | HackOrGoHome</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <main class="container">
+    <header class="game-header">
+      <a href="/games" class="back-link">← Back to Quests</a>
+      <h1>MVP Quest: Scope Cutter</h1>
+    </header>
+
+    <!-- SETUP SCREEN -->
+    <section id="screen-setup" class="card">
+      <h2>Choose Your Challenge Difficulty</h2>
+      <!-- Status message container at the top of the setup box -->
+      <div id="setup-status" class="mvp-status" style="margin-bottom: 1rem; min-height: 1.5rem;"></div>
+      
+      <div class="difficulty-picker">
+        <label><input type="radio" name="difficulty" value="easy"> Easy (48h, 8-10 features)</label>
+        <label><input type="radio" name="difficulty" value="medium" checked> Medium (36h, 10-12 features)</label>
+        <label><input type="radio" name="difficulty" value="hard"> Hard (24h, 12-14 features)</label>
+      </div>
+      <div class="button-group">
+        <button id="start-btn" class="btn primary">Start Quest</button>
+        <button class="quit-btn btn secondary">Back to Quests</button>
+      </div>
+    </section>
+
+    <!-- GAMEPLAY SCREEN -->
+    <section id="screen-round" class="card" hidden>
+      <div class="meta-banner" id="round-meta"></div>
+      <p id="round-brief" class="brief-text"></p>
+      
+      <div class="hints-section">
+        <button id="hint-btn" class="btn small">Need a hint? (3/3 remaining)</button>
+        <div id="hint-list"></div>
+      </div>
+
+      <h3>Select Features to Keep for your MVP:</h3>
+      <div id="kept-count" class="badge">Kept 0 features</div>
+      <div id="feature-grid" class="feature-grid"></div>
+
+      <div class="form-group">
+        <label for="story">Your Demo Story:</label>
+        <textarea id="story" placeholder="Describe how you will demo this in 60 seconds..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="reason">Why did you cut what you cut? (Optional):</label>
+        <input type="text" id="reason" placeholder="Brief rationale...">
+      </div>
+
+      <!-- ACTION BUTTONS & STATUS ROW -->
+      <div class="action-status-row" style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem;">
+        <button id="submit-btn" class="btn primary">Lock in my MVP</button>
+        <button class="quit-btn btn secondary">Exit to Quests</button>
+        <!-- Red error status box sits right next to the Exit to Quests button -->
+        <div id="mvp-status" class="mvp-status"></div>
+      </div>
+    </section>
+
+    <!-- RESULT SCREEN -->
+    <section id="screen-result" class="card" hidden>
+      <h2>Round Evaluation</h2>
+      <div id="result-body"></div>
+      <div class="button-group">
+        <button id="again-btn" class="btn primary">Play Another Round</button>
+        <button class="quit-btn btn secondary">Exit to Quests</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/mvp.js"></script>
+</body>
+</html>

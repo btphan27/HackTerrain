@@ -1,0 +1,232 @@
+[
+    {
+      "project": {
+        "title": "Practice scenario: ReciPal",
+        "hackathon": "Practice scenario (not a real entry)"
+      },
+      "brief": "Students often stare into a fridge full of random ingredients and order takeout instead. Your team wants an app where you snap a photo of your ingredients and instantly get recipes you can make right now.",
+      "teamSize": 4,
+      "hoursAvailable": 48,
+      "features": [
+        {
+          "id": "f1",
+          "name": "Weekly meal planner",
+          "description": "Drag recipes onto a calendar."
+        },
+        {
+          "id": "f2",
+          "name": "Photo-to-ingredients detection",
+          "description": "Identifies food items from a photo of your fridge."
+        },
+        {
+          "id": "f3",
+          "name": "Nutrition tracking",
+          "description": "Calories and macros for every meal."
+        },
+        {
+          "id": "f4",
+          "name": "Recipe suggestions from ingredients",
+          "description": "Shows recipes that use what you already have."
+        },
+        {
+          "id": "f5",
+          "name": "Saved favorites",
+          "description": "Bookmark recipes to find them later."
+        },
+        {
+          "id": "f6",
+          "name": "Share recipes on social media",
+          "description": "Post a recipe card to other apps."
+        },
+        {
+          "id": "f7",
+          "name": "Dietary filters",
+          "description": "Filter by vegetarian, vegan, gluten-free, and so on."
+        },
+        {
+          "id": "f8",
+          "name": "Voice-guided cooking mode",
+          "description": "Reads each step aloud hands-free."
+        },
+        {
+          "id": "f9",
+          "name": "Grocery list export",
+          "description": "Turns missing ingredients into a shopping list."
+        },
+        {
+          "id": "f10",
+          "name": "User accounts",
+          "description": "Sign-up and login to sync across devices."
+        }
+      ],
+      "shippedIds": [
+        "f2",
+        "f4",
+        "f7"
+      ],
+      "shippedNote": "The magic moment is 'photo in, dinner ideas out.' Detecting ingredients, suggesting recipes, and filtering for diets proves the whole idea. Accounts, planners, and sharing can all be added once people love the first loop.",
+      "hints": [
+        "What is the single 'wow' moment a judge should experience in the first thirty seconds?",
+        "Look for features that organize or store things for later, like saving, planning, and sharing. They matter only after the main moment works.",
+        "The core loop is: show the app your ingredients, get recipes that fit, and make sure they respect what you can eat. Keep what serves that loop."
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "project": {
+        "title": "Practice scenario: SafeWalk",
+        "hackathon": "Practice scenario (not a real entry)"
+      },
+      "brief": "Walking home alone at night makes many students nervous. Your team wants to build an app that lets a friend keep an eye on you while you walk, and gives you a fast way to get help if something feels wrong.",
+      "teamSize": 4,
+      "hoursAvailable": 24,
+      "features": [
+        {
+          "id": "f1",
+          "name": "Route that avoids dark streets",
+          "description": "Suggests walking paths based on lighting data."
+        },
+        {
+          "id": "f2",
+          "name": "Live location sharing",
+          "description": "A chosen friend sees your position on a map while you walk."
+        },
+        {
+          "id": "f3",
+          "name": "In-app chat between walkers",
+          "description": "Users can message each other inside the app."
+        },
+        {
+          "id": "f4",
+          "name": "User accounts and profiles",
+          "description": "Sign-up, login, and a profile page with a photo."
+        },
+        {
+          "id": "f5",
+          "name": "One-tap emergency alert",
+          "description": "Sends your location to your trusted contact and campus security."
+        },
+        {
+          "id": "f6",
+          "name": "Walking-partner matching",
+          "description": "Finds other students heading the same way."
+        },
+        {
+          "id": "f7",
+          "name": "Route ratings and reviews",
+          "description": "Students rate how safe a path felt."
+        },
+        {
+          "id": "f8",
+          "name": "Choose a trusted contact",
+          "description": "Pick one person who gets your walk link and alerts."
+        },
+        {
+          "id": "f9",
+          "name": "Dark mode",
+          "description": "A night-friendly color theme."
+        },
+        {
+          "id": "f10",
+          "name": "Campus safety admin dashboard",
+          "description": "Staff see heat maps of reported incidents."
+        }
+      ],
+      "shippedIds": [
+        "f2",
+        "f5",
+        "f8"
+      ],
+      "shippedNote": "The promise is 'someone has my back while I walk.' Sharing live location, choosing who sees it, and a one-tap alert is a complete loop that can be demoed in under a minute. Matching, ratings, and dashboards all need many users before they show any value.",
+      "hints": [
+        "Imagine the judge gives you 60 seconds. What is the one story you want them to watch from start to finish?",
+        "Features that need lots of users, extra data, or an admin side usually make good cuts. Ask what only matters once the app is already popular.",
+        "The core loop is: start a walk, a trusted person can see you, and you can call for help instantly. Keep what supports that loop."
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "difficulty": "hard",
+      "project": {
+        "title": "Practice scenario: FoodBridge",
+        "hackathon": "Practice scenario (not a real entry)"
+      },
+      "brief": "Restaurants throw away good food every night while food banks struggle to find volunteers who can pick it up in time. Your team wants a tool that connects a restaurant with surplus food to a nearby volunteer who can collect it before it spoils.",
+      "teamSize": 2,
+      "hoursAvailable": 24,
+      "features": [
+        {
+          "id": "f1",
+          "name": "Pickup-by deadline countdown",
+          "description": "Each listing shows how long the food stays safe to collect."
+        },
+        {
+          "id": "f2",
+          "name": "Text alert to nearby volunteers",
+          "description": "Volunteers within a few miles are notified when food is posted."
+        },
+        {
+          "id": "f3",
+          "name": "Volunteer background-check verification",
+          "description": "Confirms volunteers are vetted before they collect food."
+        },
+        {
+          "id": "f4",
+          "name": "Restaurant posts a surplus listing",
+          "description": "A restaurant enters what food is available, how much, and the pickup address."
+        },
+        {
+          "id": "f5",
+          "name": "Multi-stop route optimization",
+          "description": "Plans the fastest path when a volunteer collects from several restaurants."
+        },
+        {
+          "id": "f6",
+          "name": "Impact dashboard",
+          "description": "Shows meals saved and pounds of food diverted from landfill."
+        },
+        {
+          "id": "f7",
+          "name": "Volunteer claims a listing",
+          "description": "A volunteer takes a listing so no one else shows up for the same food."
+        },
+        {
+          "id": "f8",
+          "name": "Tax receipts for donating restaurants",
+          "description": "Generates a donation record restaurants can use at tax time."
+        },
+        {
+          "id": "f9",
+          "name": "Allergen and ingredient labels",
+          "description": "Listings include common allergens so food banks can sort safely."
+        },
+        {
+          "id": "f10",
+          "name": "Ratings for volunteers and restaurants",
+          "description": "Both sides rate how the pickup went."
+        },
+        {
+          "id": "f11",
+          "name": "Mark pickup complete",
+          "description": "The volunteer taps 'picked up' so the restaurant knows the food is gone."
+        },
+        {
+          "id": "f12",
+          "name": "Spanish and Mandarin language support",
+          "description": "The app is available in more than one language."
+        }
+      ],
+      "shippedIds": [
+        "f2",
+        "f4",
+        "f7",
+        "f11"
+      ],
+      "shippedNote": "The loop is: a restaurant posts food, nearby volunteers are alerted, one volunteer claims it, and it gets marked picked up. The claim step matters most because it stops two volunteers showing up for the same food. Several cuts are real needs later (background checks, allergen labels, and a pickup deadline are all defensible), but none is required to prove the loop in 24 hours with two people.",
+      "hints": [
+        "Write the story in one line: who does what first, second, third, fourth? Which features never appear in it?",
+        "Many of these are genuinely good ideas, and some will be necessary in the real world. The question is not 'is it valuable?' but 'does the demo break without it?'",
+        "The core loop is: a restaurant posts food, a nearby volunteer is alerted, one volunteer claims it, and it is marked picked up. Keep what carries that loop."
+      ]
+    }
+  ]

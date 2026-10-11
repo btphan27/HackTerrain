@@ -1,35 +1,34 @@
-<%- include('partials/header', { title: "Quests | HackOrGoHome", description: "Pick a game to build for your next hackathon.", active: "games" }) %>
-  <main id="main">
-    <div class="container">
-      <div class="page-title">
-        <h1>Quests</h1>
-        <p>Pick a game to build for your next hackathon.</p>
-      </div>
-
-      <form class="filters" aria-label="Filter game ideas">
-        <label>Genre
-          <select name="genre"><option value="">All</option><option>Puzzle</option><option>Arcade</option><option>Strategy</option></select>
-        </label>
-        <label>Difficulty
-          <select name="difficulty"><option value="">All</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select>
-        </label>
-        <label>Time available
-          <select name="time"><option value="">Any</option><option>24 hours</option><option>48 hours</option></select>
-        </label>
-        <button class="btn" type="submit">Apply filters</button>
-      </form>
-
-      <div class="grid">
-        <% for (var i = 0; i < 6; i++) { %>
-        <article class="card">
-          <h3>Game idea title</h3>
-          <p class="meta">Difficulty &bull; Time estimate</p>
-          <p>One-line pitch for the game.</p>
-          <span class="tag">Genre</span>
-          <a class="btn btn-dark" href="#">View details</a>
-        </article>
-        <% } %>
-      </div>
+<%- include('partials/header', { title: "Quests | HackOrGoHome", description: "Practice the skills that win hackathons.", active: "games" }) %>
+<main id="main">
+  <div class="container">
+    <div class="page-title">
+      <h1>Quests</h1>
+      <p>Pick a quest to practice a skill that wins hackathons.</p>
     </div>
-  </main>
+
+    <div class="grid">
+      <article class="card">
+        <h3>MVP Quest</h3>
+        <p class="meta">Scoping &bull; Easy, medium, or hard</p>
+        <p>Cut a real winning project's wish list down to what you can actually build, then see what the winners shipped.</p>
+        <span class="tag">Minimum viable product</span>
+        <a class="btn btn-dark" href="/mvp">Play</a>
+      </article>
+
+      <article class="card">
+        <h3>Team Quest</h3>
+        <p class="meta">Teamwork</p>
+        <p>Work with AI teammates who each have their own personality, and keep the project on track.</p>
+        <span class="tag">Coming soon</span>
+      </article>
+
+      <article class="card">
+        <h3>Judge Panel</h3>
+        <p class="meta">Pitching</p>
+        <p>Pitch to three judges with different priorities and answer their toughest questions.</p>
+        <span class="tag">Coming soon</span>
+      </article>
+    </div>
+  </div>
+</main>
 <%- include('partials/footer') %>
