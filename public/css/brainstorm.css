@@ -81,7 +81,7 @@
 .bs-sky.night .bs-mat { color: var(--lavender); }
 
 /* category column with the two clickable modes */
-.bs-columns { grid-template-columns: minmax(280px, 380px); }
+.bs-columns { grid-template-columns: repeat(auto-fit, minmax(280px, 380px)); }
 .bs-mode { display: flex; flex-direction: column; gap: .25rem; padding: .8rem 1rem; background: var(--white); border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--stone-dark); color: var(--ink); text-decoration: none; transition: transform .1s, box-shadow .1s; }
 .bs-mode:hover, .bs-mode:focus-visible { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--pink-dark); background: var(--cream); }
 .bs-mode strong { font-family: var(--font-pixel); font-size: 1.1rem; }

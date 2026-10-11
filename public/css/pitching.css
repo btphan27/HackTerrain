@@ -1,0 +1,46 @@
+/* Pitching game: Creeper Puncher arena (theme tokens come from style.css) */
+.pt-arena { position: relative; overflow: hidden; margin-bottom: 1rem; padding: .8rem 1rem 0; min-height: 270px; background: linear-gradient(var(--sky-1), #e8f6ff); border: 4px solid var(--ink); box-shadow: 5px 5px 0 var(--stone-dark); }
+.pt-hud { display: flex; justify-content: space-between; align-items: center; gap: 1rem; position: relative; z-index: 3; }
+.pt-hearts { display: flex; gap: 4px; }
+.pt-heart { width: 26px; height: 24px; transition: opacity .2s; }
+.pt-heart.lost { opacity: .35; filter: grayscale(1); }
+.pt-hp { font-family: var(--font-pixel); font-size: .9rem; text-align: right; }
+.pt-hpbar { width: 150px; height: 14px; margin-top: 2px; background: var(--ink); border: 2px solid var(--white); }
+.pt-hpfill { height: 100%; width: 100%; background: #ef4444; }
+
+.pt-fighters { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: flex-end; height: 170px; padding: 0 12%; }
+.pt-arena { --reach: 200px; }
+.pt-steve, .pt-creeper { width: 80px; position: relative; z-index: 2; transition: transform .25s ease-out; image-rendering: pixelated; }
+.pt-steve svg, .pt-creeper svg { display: block; width: 100%; height: auto; }
+.pt-creeper { width: 70px; }
+.pt-arena.baby .pt-creeper { width: 54px; }
+.pt-arena.charged .pt-creeper svg { filter: drop-shadow(0 0 6px #7fd3ff) drop-shadow(0 0 12px #7fd3ff); }
+.pt-ground { position: absolute; left: 0; right: 0; bottom: 0; height: 36px; background: var(--wood); border-top: 8px solid var(--grass); z-index: 1; }
+
+/* Clear attack cues without extra animation: a big label, an icon on whoever got hit, and a colour tint. */
+.pt-spark { position: absolute; bottom: 90px; font-size: 3.4rem; line-height: 1; z-index: 4; opacity: 0; pointer-events: none; }
+.pt-spark.show { opacity: 1; }
+.pt-spark.on-creeper { right: 9%; }
+.pt-spark.on-steve { left: 9%; }
+.pt-banner { position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%); z-index: 5; padding: .35rem .9rem; font-family: var(--font-pixel); font-size: 2rem; font-weight: 700; white-space: nowrap; color: var(--white); border: 4px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); }
+.pt-banner[hidden] { display: none; }
+.pt-banner.punch { background: #d62839; }
+.pt-banner.hit { background: #c0415f; }
+
+.pt-creeper.struck svg { filter: sepia(1) saturate(6) hue-rotate(-50deg); }
+.pt-creeper.boom svg { filter: brightness(2.2) saturate(.2); }
+.pt-steve.hurt svg { filter: sepia(1) saturate(6) hue-rotate(-50deg); }
+.pt-creeper.dead, .pt-steve.dead { opacity: 0; }
+
+.pt-question { max-width: none; }
+.pt-judge { margin: 0; font-family: var(--font-pixel); font-weight: 700; color: var(--bedrock); }
+.pt-progress { margin: 0 0 .4rem; font-size: .85rem; color: var(--ink-soft); }
+.bs-opt.right { background: #effaf0; border-color: #3f9d4f; }
+.bs-opt.wrong { background: #fff1f1; border-color: #c0415f; }
+.bs-opt[disabled], .pt-options-locked .bs-opt { cursor: default; }
+button.bs-opt { width: 100%; text-align: left; font: inherit; font-weight: 700; color: var(--ink); }
+.pt-feedback { margin-top: 1rem; padding: .8rem 1rem; background: var(--lavender); border: 3px solid var(--ink); }
+.pt-feedback.good { background: #effaf0; border-color: #3f9d4f; }
+.pt-feedback.bad { background: #fff1f1; border-color: #c0415f; }
+
+@media (max-width: 560px) { .pt-fighters { padding: 0 4%; } .pt-banner { font-size: 1.1rem; } }

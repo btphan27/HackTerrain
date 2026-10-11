@@ -1,0 +1,88 @@
+<% var survival = typeof level !== "undefined" && level === "survival"; %>
+<%- include('partials/header', { title: survival ? "Creeper Puncher: Survival" : "Creeper Puncher", description: "Pitching practice: answer the judges' questions and punch the creeper.", active: "quests" }) %>
+  <main id="main">
+    <div class="container">
+      <link rel="stylesheet" href="/css/brainstorm.css">
+      <link rel="stylesheet" href="/css/pitching.css">
+      <div class="page-title">
+        <p class="meta"><a href="/games">&larr; Back to Quests</a></p>
+        <h1>Creeper Puncher</h1>
+        <p><% if (survival) { %><span class="bs-level survival">Survival</span> A Charged Creeper and hardcore judges. 5 hits to win, 3 hearts. Reward: a building for your world.<% } else { %><span class="bs-level">Easy</span> A Baby Creeper and friendly judges. 3 hits to win, 3 hearts. Reward: nature for your world.<% } %></p>
+      </div>
+
+      <% if (!user) { %>
+        <p class="notice"><a href="/login">Log in</a> to play and earn world rewards.</p>
+      <% } %>
+      <p class="error-msg" id="bs-error" role="alert" hidden></p>
+      <div class="bs-loading" id="pt-loading" role="status" aria-live="polite" hidden>
+        <span class="bs-pick" aria-hidden="true">⚔️</span>
+        <div><strong id="pt-loading-text">Summoning the creeper...</strong>
+          <p class="hint" id="pt-loading-sub" style="margin:0"></p></div>
+      </div>
+
+      <!-- START -->
+      <section class="panel bs-stage" id="pt-start">
+        <h2>Pitch to the judges</h2>
+        <p>You just finished your pitch. Now the judges ask questions. Pick the best reply: a right answer <strong>punches the creeper</strong>, a wrong answer lets it <strong>hit you</strong>. Beat the creeper before you run out of hearts!</p>
+        <div class="btn-row"><button class="btn btn-primary" type="button" id="pt-go" data-level="<%= survival ? "survival" : "easy" %>">Enter the arena</button></div>
+      </section>
+
+      <!-- PLAY -->
+      <section class="bs-stage" id="pt-play" hidden>
+        <div class="pt-arena" id="pt-arena">
+          <div class="pt-hud">
+            <div class="pt-hearts" id="pt-hearts" aria-label="Your hearts"></div>
+            <div class="pt-hp"><span id="pt-creeper-name">Creeper</span>
+              <div class="pt-hpbar" aria-label="Creeper health"><div class="pt-hpfill" id="pt-hpfill"></div></div>
+            </div>
+          </div>
+          <div class="pt-fighters">
+            <div class="pt-steve" id="pt-steve" aria-hidden="true">
+              <svg viewBox="0 0 12 20" shape-rendering="crispEdges"><rect x="2" y="0" width="8" height="3" fill="#9a7b66"/><rect x="2" y="3" width="8" height="5" fill="#f2c9a0"/><rect x="4" y="4" width="1" height="1" fill="#4b3a68"/><rect x="7" y="4" width="1" height="1" fill="#4b3a68"/><rect x="2" y="8" width="8" height="6" fill="#7fc4f0"/><rect x="10" y="8" width="2" height="4" fill="#f2c9a0"/><rect x="0" y="8" width="2" height="5" fill="#f2c9a0"/><rect x="2" y="14" width="3" height="6" fill="#8f7fc4"/><rect x="7" y="14" width="3" height="6" fill="#8f7fc4"/></svg>
+            </div>
+            <div class="pt-spark" id="pt-spark" aria-hidden="true"></div>
+            <div class="pt-creeper" id="pt-creeper" aria-hidden="true">
+              <svg viewBox="0 0 12 20" shape-rendering="crispEdges"><rect x="2" y="0" width="8" height="8" fill="#a8e0a0"/><rect x="3" y="2" width="2" height="2" fill="#4b3a68"/><rect x="7" y="2" width="2" height="2" fill="#4b3a68"/><rect x="5" y="4" width="2" height="2" fill="#4b3a68"/><rect x="4" y="6" width="1" height="2" fill="#4b3a68"/><rect x="7" y="6" width="1" height="2" fill="#4b3a68"/><rect x="3" y="8" width="6" height="8" fill="#8fcf87"/><rect x="2" y="16" width="3" height="4" fill="#7ab872"/><rect x="7" y="16" width="3" height="4" fill="#7ab872"/></svg>
+            </div>
+          </div>
+          <div class="pt-ground" aria-hidden="true"></div>
+        </div>
+
+        <div class="panel pt-question">
+          <p class="pt-judge" id="pt-judge"></p>
+          <p class="pt-progress" id="pt-progress"></p>
+          <h2 id="pt-prompt" style="border:0;padding:0"></h2>
+          <div class="bs-options" id="pt-options"></div>
+          <div class="pt-feedback" id="pt-feedback" hidden>
+            <p id="pt-feedback-text" style="margin:0 0 .6rem"></p>
+            <button class="btn btn-primary" type="button" id="pt-next">Next question</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RESULT -->
+      <section class="panel bs-stage" id="pt-result" hidden aria-live="polite">
+        <div class="bs-trophy">
+          <div class="bs-big" id="pt-res-emoji"></div>
+          <h2 id="pt-res-title" style="border:0"></h2>
+        </div>
+        <p id="pt-res-text"></p>
+        <p class="notice" id="pt-res-reward" hidden></p>
+        <p class="hint" id="pt-res-inspo"></p>
+        <div class="btn-row">
+          <button class="btn btn-primary" type="button" id="pt-again">Fight again</button>
+          <a class="btn btn-dark" href="/games">Back to Quests</a>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script>
+  window.addEventListener("load", function () {
+    if (!window.__ptReady) {
+      var e = document.getElementById("bs-error");
+      e.textContent = "The game script (public/js/pitching.js) did not load. Copy it into your public/js folder and restart npm start.";
+      e.hidden = false;
+    }
+  });
+  </script>
+<%- include('partials/footer', { scripts: ['/js/pitching.js'] }) %>

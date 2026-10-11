@@ -1,0 +1,264 @@
+{
+  "easy": {
+    "creeperName": "Baby Creeper",
+    "questions": [
+      {
+        "judge": "tech",
+        "prompt": "What is the simplest way to serve your frontend and static files locally in Node.js?",
+        "options": [
+          {
+            "text": "Use Express static middleware (express.static('public')).",
+            "correct": true,
+            "why": "It's one line and exactly what the middleware is for."
+          },
+          {
+            "text": "Manually read every single image byte by byte in a custom loop.",
+            "correct": false,
+            "why": "That reinvents something that already exists, and wastes your hackathon hours."
+          },
+          {
+            "text": "Compile a brand new binary every time a page loads.",
+            "correct": false,
+            "why": "Way too heavy. Static files just need to be served."
+          }
+        ]
+      },
+      {
+        "judge": "business",
+        "prompt": "For a hackathon MVP, what should your pitch say about your target audience?",
+        "options": [
+          {
+            "text": "Targeting 50 million enterprise clients globally on day one.",
+            "correct": false,
+            "why": "Too broad. Judges don't believe you can reach everyone at once."
+          },
+          {
+            "text": "Solving one core pain point for a specific user group cleanly.",
+            "correct": true,
+            "why": "A specific group with a clear pain point is credible and easy to picture."
+          },
+          {
+            "text": "Ignoring users entirely and talking about the background graphics.",
+            "correct": false,
+            "why": "Judges want to hear who it helps, not how it looks."
+          }
+        ]
+      },
+      {
+        "judge": "panel",
+        "prompt": "What happens if your external API goes down during your live presentation?",
+        "options": [
+          {
+            "text": "Panic and shut down the computer.",
+            "correct": false,
+            "why": "Panic loses the room. Have a plan instead."
+          },
+          {
+            "text": "Have local fallback data or a recorded demo ready to rescue it.",
+            "correct": true,
+            "why": "A backup plan keeps the pitch going when things fail."
+          },
+          {
+            "text": "Blame the hackathon Wi-Fi router.",
+            "correct": false,
+            "why": "Even if it's true, excuses don't help the judges see your project."
+          }
+        ]
+      },
+      {
+        "judge": "pitch",
+        "prompt": "How should you open a two minute pitch?",
+        "options": [
+          {
+            "text": "Start with a real person who has the problem and what goes wrong for them.",
+            "correct": true,
+            "why": "A human problem gets attention before any tech talk."
+          },
+          {
+            "text": "List every team member's major and the tools you used.",
+            "correct": false,
+            "why": "That can come later. Open with why anyone should care."
+          },
+          {
+            "text": "Say 'um, so we kind of built a thing' and start the demo.",
+            "correct": false,
+            "why": "A vague opening wastes your best seconds."
+          }
+        ]
+      },
+      {
+        "judge": "design",
+        "prompt": "A judge looks confused during your demo. What is the best response?",
+        "options": [
+          {
+            "text": "Talk faster so you can fit everything in.",
+            "correct": false,
+            "why": "More speed means more confusion."
+          },
+          {
+            "text": "Pause, simplify, and walk through the one main flow again.",
+            "correct": true,
+            "why": "Simple and slow beats complete and confusing."
+          },
+          {
+            "text": "Skip to the next slide and hope it gets clearer.",
+            "correct": false,
+            "why": "You'd leave the judge behind."
+          }
+        ]
+      }
+    ]
+  },
+  "survival": {
+    "creeperName": "Charged Creeper",
+    "questions": [
+      {
+        "judge": "tech",
+        "prompt": "How do you handle traffic spikes and avoid API rate limits?",
+        "options": [
+          {
+            "text": "Send thousands of requests synchronously on every button click.",
+            "correct": false,
+            "why": "That's how you hit rate limits instantly."
+          },
+          {
+            "text": "Add a timeout and fall back to cached data when the API is slow.",
+            "correct": true,
+            "why": "Caching plus a fallback keeps the demo working."
+          },
+          {
+            "text": "Turn the server off when traffic increases.",
+            "correct": false,
+            "why": "That means the demo is down exactly when people look."
+          }
+        ]
+      },
+      {
+        "judge": "business",
+        "prompt": "What is your long-term sustainability strategy?",
+        "options": [
+          {
+            "text": "A freemium plan with limits for heavy users.",
+            "correct": true,
+            "why": "It's a believable model that matches how the product is used."
+          },
+          {
+            "text": "Rely on free cloud credits that never expire.",
+            "correct": false,
+            "why": "Credits run out. Judges know that."
+          },
+          {
+            "text": "Charge users five dollars every time they view a page.",
+            "correct": false,
+            "why": "Users would leave immediately."
+          }
+        ]
+      },
+      {
+        "judge": "panel",
+        "prompt": "Why should we award you the grand prize over everyone else?",
+        "options": [
+          {
+            "text": "Because our idea solves a real problem, works live, and we can explain why it matters.",
+            "correct": true,
+            "why": "A real problem, a working demo and a clear message is a winning combination."
+          },
+          {
+            "text": "Because we didn't have time to test it, but it looks really cool.",
+            "correct": false,
+            "why": "Untested and flashy rarely wins."
+          },
+          {
+            "text": "Because we spent all our time on custom fonts.",
+            "correct": false,
+            "why": "Polish matters less than a working idea."
+          }
+        ]
+      },
+      {
+        "judge": "business",
+        "prompt": "A judge asks: 'Who are your competitors?' What's your best answer?",
+        "options": [
+          {
+            "text": "We have no competitors.",
+            "correct": false,
+            "why": "Almost every idea has alternatives. Saying none sounds naive."
+          },
+          {
+            "text": "Two real alternatives people use today, and the specific gap we fill.",
+            "correct": true,
+            "why": "Naming real alternatives shows you did your homework."
+          },
+          {
+            "text": "They're all bad, ours is just better.",
+            "correct": false,
+            "why": "Dismissing others without specifics is not convincing."
+          }
+        ]
+      },
+      {
+        "judge": "tech",
+        "prompt": "Your demo hits a bug on screen. What do you do?",
+        "options": [
+          {
+            "text": "Stop and debug live while the judges wait.",
+            "correct": false,
+            "why": "Live debugging burns your few minutes."
+          },
+          {
+            "text": "Acknowledge it in one sentence, switch to your backup, and keep going.",
+            "correct": true,
+            "why": "Calm recovery shows professionalism."
+          },
+          {
+            "text": "Blame the teammate who wrote that part.",
+            "correct": false,
+            "why": "Blaming a teammate looks worse than the bug."
+          }
+        ]
+      },
+      {
+        "judge": "pitch",
+        "prompt": "You have 30 seconds left. What do you say?",
+        "options": [
+          {
+            "text": "Rush through all your remaining slides.",
+            "correct": false,
+            "why": "Nobody can follow that."
+          },
+          {
+            "text": "Restate the problem, your solution, and what you'd do next.",
+            "correct": true,
+            "why": "A clean wrap-up is what judges remember."
+          },
+          {
+            "text": "Apologize that you ran out of time.",
+            "correct": false,
+            "why": "An apology is the last thing you want them to remember."
+          }
+        ]
+      },
+      {
+        "judge": "design",
+        "prompt": "'What would you build next with another month?' Best answer?",
+        "options": [
+          {
+            "text": "Everything on our feature list.",
+            "correct": false,
+            "why": "No priorities means no plan."
+          },
+          {
+            "text": "One prioritized next step based on what users told us.",
+            "correct": true,
+            "why": "Specific and user-driven shows maturity."
+          },
+          {
+            "text": "Nothing, it's finished.",
+            "correct": false,
+            "why": "Judges want to see you can grow the idea."
+          }
+        ]
+      }
+    ]
+  }
+}

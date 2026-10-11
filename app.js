@@ -133,7 +133,8 @@ app.use(require("./routes/terrain")({ requireLogin, show }));
 app.use(require("./routes/events")({ requireLogin, show }));
 app.use(require("./routes/teamup")({ requireLogin, show }));
 app.use(require("./routes/challenges")({ requireLogin }));
-app.use(require("./routes/brainstorm")({ requireLogin, show })); // Project Brainstorming games (/games/craft, /games/base)
+app.use(require("./routes/brainstorm")({ requireLogin, show })); // Project Brainstorming game (/games/craft, /games/survival)
+app.use(require("./routes/pitching")({ show })); // Pitching game "Creeper Puncher" (/games/pitch, /games/pitch-survival)
 require("./hackathons").startSync();
 
 app.listen(PORT, () => console.log(`Running on port ${PORT}` + (PRODUCTION ? "" : ` (http://localhost:${PORT})`)));
