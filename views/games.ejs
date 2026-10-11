@@ -3,51 +3,32 @@
     <div class="container">
       <div class="page-title">
         <h1>Quests</h1>
-        <p>Practice the skills you need at a hackathon. Finish a quest to earn something for your world: nature for easy, animals for medium, buildings for hard.</p>
+        <p>Practice the skills you need at a hackathon. Finish a quest to earn something for your world.</p>
       </div>
 
       <% if (!user) { %>
-        <p class="notice"><a href="/login">Log in</a> to generate quests and earn world rewards.</p>
+        <p class="notice"><a href="/login">Log in</a> to play quests and earn world rewards.</p>
       <% } %>
 
-      <form class="filters" id="quest-form" aria-label="Pick a quest">
-        <label>Topic
-          <select name="topic" id="quest-topic">
-            <% topics.forEach(function (t) { %><option value="<%= t.id %>"><%= t.name %></option><% }) %>
-          </select>
-        </label>
-        <label>Difficulty
-          <select name="difficulty" id="quest-difficulty">
-            <option value="easy">Easy (nature reward)</option>
-            <option value="medium">Medium (animal reward)</option>
-            <option value="hard">Hard (building reward)</option>
-          </select>
-        </label>
-        <button class="btn" type="submit" id="quest-go" <%= user ? "" : "disabled" %>>Get a quest</button>
-      </form>
-
-      <p class="error-msg" id="quest-error" role="alert" hidden></p>
-
-      <section class="panel" id="quest-card" hidden aria-live="polite">
-        <h2 id="quest-title"></h2>
-        <p class="meta" id="quest-meta"></p>
-        <p id="quest-desc"></p>
-        <p><strong>What to hand in:</strong> <span id="quest-deliverable"></span></p>
-
-        <label class="field">Your answer
-          <textarea id="quest-answer" rows="6" placeholder="Write your answer here (at least 40 characters)"></textarea>
-        </label>
-        <div class="btn-row">
-          <button class="btn btn-primary" type="button" id="quest-submit">Submit my answer</button>
-          <button class="btn btn-dark" type="button" id="quest-solution">I give up, show the solution</button>
-        </div>
-
-        <div class="notice" id="quest-solution-box" hidden>
-          <strong>Model answer (no reward for this quest):</strong>
-          <p id="quest-solution-text"></p>
-        </div>
-        <div class="notice" id="quest-reward" hidden></div>
-      </section>
+      <link rel="stylesheet" href="/css/brainstorm.css">
+      <h2 class="section-title">Pick a category</h2>
+      <div class="bs-cards bs-columns">
+        <article class="card bs-column">
+          <span class="bs-icon" aria-hidden="true">💡⛏️</span>
+          <h3>Project brainstorming</h3>
+          <p>Find a project idea worth building, inspired by winning-style hackathon projects. Choose a mode:</p>
+          <a class="bs-mode" href="/games/craft">
+            <span class="bs-level">Easy</span>
+            <strong>Village Crafting</strong>
+            <span>Answer 3 questions and craft an item for a villager. Reward: nature.</span>
+          </a>
+          <a class="bs-mode survival" href="/games/survival">
+            <span class="bs-level survival">Survival</span>
+            <strong>Village Crafting: Night Shift</strong>
+            <span>The same crafting game, but harder: tricky answers and no hints. Reward: a building.</span>
+          </a>
+        </article>
+      </div>
     </div>
   </main>
-<%- include('partials/footer', { scripts: ['/js/quests.js'] }) %>
+<%- include('partials/footer') %>

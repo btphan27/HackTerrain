@@ -1,0 +1,50 @@
+[
+  {
+    "title": "Practice example: ReciPal",
+    "tagline": "Snap your fridge, get dinner ideas",
+    "theme": "students who waste food and order takeout because they don't know what to cook",
+    "description": "An app that identifies the ingredients in a photo of your fridge and suggests recipes you can make right now, filtered by diet."
+  },
+  {
+    "title": "Practice example: SafeWalk",
+    "tagline": "A friend watches over you on the walk home",
+    "theme": "people who feel unsafe walking home alone at night",
+    "description": "A live-location app that lets a friend follow your route, and alerts them if you stop for too long or leave the path."
+  },
+  {
+    "title": "Practice example: FoodBridge",
+    "tagline": "Connect leftover restaurant food with food banks",
+    "theme": "restaurants that throw away good food while food banks struggle to collect it in time",
+    "description": "A tool that lets a restaurant post leftovers and notifies nearby volunteers who can pick them up before closing."
+  },
+  {
+    "title": "Practice example: StudySpot",
+    "tagline": "Find a quiet seat on campus right now",
+    "theme": "students who can't find a quiet place to study during exam week",
+    "description": "Crowd-sourced seat availability for libraries and study rooms, with noise level reports updated by students."
+  },
+  {
+    "title": "Practice example: LinguaLoop",
+    "tagline": "Practice a new language by talking to a friendly bot",
+    "theme": "people learning a second language who are too shy to practice speaking",
+    "description": "A voice chat partner that adapts to your level, corrects gently, and tracks the words you keep missing."
+  },
+  {
+    "title": "Practice example: BudgetBuddy",
+    "tagline": "Split bills and track shared costs without awkwardness",
+    "theme": "roommates who argue about who owes what",
+    "description": "A shared ledger that scans receipts, splits costs fairly, and sends friendly reminders."
+  },
+  {
+    "title": "Practice example: GreenCommute",
+    "tagline": "Make biking and transit the easy choice",
+    "theme": "commuters who drive alone because greener options feel confusing",
+    "description": "Combines bike lanes, bus times and weather into one suggestion, and rewards low-carbon trips."
+  },
+  {
+    "title": "Practice example: SignSpeak",
+    "tagline": "Learn basic sign language from your webcam",
+    "theme": "people who want to communicate with deaf friends or classmates but have nowhere to practice",
+    "description": "Uses the camera to recognise hand shapes and gives instant feedback while you practice common signs."
+  }
+]

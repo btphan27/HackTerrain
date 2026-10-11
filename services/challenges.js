@@ -9,15 +9,11 @@ const TOPICS = [
     focus: "breaking down a hard technical or logistical obstacle and finding a workable solution under pressure" },
   { id: "teamwork", name: "Team work",
     focus: "dividing roles, communicating, resolving disagreements, and integrating work from several people" },
-  { id: "project-brainstorming", name: "Project brainstorming",
-    focus: "generating, comparing, and choosing a strong project idea" },
-  { id: "mvp", name: "Minimum viable product",
-    focus: "cutting an idea down to the smallest version that can be built and demoed in 24 to 48 hours" },
   { id: "pitching", name: "Pitching",
     focus: "explaining a project clearly and persuasively in 2 to 3 minutes" },
 ];
 const DIFFICULTIES = ["easy", "medium", "hard"];
-const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash"; // check AI Studio for the current model name
+const MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash"; // check AI Studio for the current model name
 
 function loadJson(file) {
   try {

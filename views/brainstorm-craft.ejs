@@ -1,0 +1,81 @@
+<% var survival = typeof level !== "undefined" && level === "survival"; %>
+<%- include('partials/header', { title: survival ? "Village Crafting: Survival" : "Village Crafting", description: "Help a villager craft an item by brainstorming a project idea.", active: "quests" }) %>
+  <main id="main">
+    <div class="container">
+      <link rel="stylesheet" href="/css/brainstorm.css">
+      <div class="page-title">
+        <p class="meta"><a href="/games">&larr; Back to Quests</a></p>
+        <h1>Village Crafting</h1>
+        <p><% if (survival) { %><span class="bs-level survival">Survival</span> Same game, harder questions: every wrong answer is half right, and there are no hints. Reward: a building for your world.<% } else { %><span class="bs-level">Easy</span> Pick the best answer to three questions about a project idea. Your picks are the ingredients. Reward: nature for your world.<% } %></p>
+      </div>
+
+      <% if (!user) { %>
+        <p class="notice"><a href="/login">Log in</a> to play and earn world rewards.</p>
+      <% } %>
+      <p class="error-msg" id="bs-error" role="alert" hidden></p>
+      <div class="bs-loading" id="craft-loading" role="status" aria-live="polite" hidden>
+        <span class="bs-pick" aria-hidden="true">⛏️</span>
+        <div><strong id="craft-loading-text">Mining a question...</strong>
+          <p class="hint" id="craft-loading-sub" style="margin:0"></p></div>
+      </div>
+
+      <!-- START -->
+      <section class="panel bs-stage" id="craft-start">
+        <h2><%= survival ? "Night is falling. A villager needs gear!" : "A villager wants your help" %></h2>
+        <p>They need something crafted, but villagers only craft with ideas. Pick the best answer to their three questions and you'll make it together.</p>
+        <div class="btn-row"><button class="btn btn-primary" type="button" id="craft-go" data-level="<%= survival ? "survival" : "easy" %>">Find a villager</button></div>
+      </section>
+
+      <!-- PLAY -->
+      <section class="bs-stage" id="craft-play" hidden>
+        <div class="bs-villager">
+          <div class="bs-face" id="craft-face" aria-hidden="true">🧑‍🌾</div>
+          <div class="bs-bubble"><strong id="craft-name"></strong>
+            <p id="craft-line" style="margin:.3rem 0 0"></p>
+          </div>
+        </div>
+
+        <div class="bs-craft">
+          <div id="craft-questions"></div>
+          <aside class="bs-table" aria-label="Crafting table">
+            <h3>Crafting table</h3>
+            <div class="bs-grid" id="craft-grid"></div>
+            <div class="bs-arrow" aria-hidden="true">&darr;</div>
+            <div class="bs-result-slot" id="craft-result-slot"><span id="craft-result-emoji"></span></div>
+            <p class="hint" id="craft-progress" style="margin:.6rem 0 0"></p>
+            <div class="btn-row" style="justify-content:center">
+              <button class="btn btn-primary" type="button" id="craft-submit" disabled>Craft it!</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- RESULT -->
+      <section class="panel bs-stage" id="craft-result" hidden aria-live="polite">
+        <div class="bs-trophy">
+          <div class="bs-big" id="res-emoji"></div>
+          <h2 id="res-name"></h2>
+          <div class="bs-stars" id="res-stars" aria-label=""></div>
+        </div>
+        <p id="res-feedback"></p>
+        <ul class="bs-review" id="res-review"></ul>
+        <p class="hint" id="res-tip"></p>
+        <p class="notice" id="res-reward"></p>
+        <p class="hint" id="res-inspo"></p>
+        <div class="btn-row">
+          <button class="btn btn-primary" type="button" id="craft-again">Help another villager</button>
+          <a class="btn btn-dark" href="/games">Back to Quests</a>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script>
+  window.addEventListener("load", function () {
+    if (!window.__bsReady) {
+      var e = document.getElementById("bs-error");
+      e.textContent = "The game script (public/js/brainstorm-craft.js) did not load. Copy it into your public/js folder and restart npm start.";
+      e.hidden = false;
+    }
+  });
+  </script>
+<%- include('partials/footer', { scripts: ['/js/brainstorm-craft.js'] }) %>

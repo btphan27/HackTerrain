@@ -1,0 +1,85 @@
+<%- include('partials/header', { title: "Build Your Base", description: "Build a project idea layer by layer, then survive the night.", active: "quests" }) %>
+  <main id="main">
+    <div class="container">
+      <link rel="stylesheet" href="/css/brainstorm.css">
+      <div class="page-title">
+        <p class="meta"><a href="/games">&larr; Back to Quests</a></p>
+        <h1>Build Your Base</h1>
+        <p><span class="bs-level survival">Survival</span> Build your idea layer by layer. Then night falls.</p>
+      </div>
+
+      <% if (!user) { %>
+        <p class="notice"><a href="/login">Log in</a> to play and earn world rewards.</p>
+      <% } %>
+      <p class="error-msg" id="bs-error" role="alert" hidden></p>
+
+      <section class="panel bs-stage" id="base-start">
+        <h2>How survival works</h2>
+        <ol>
+          <li><strong>Build:</strong> pick the best option for four layers (foundation, walls, roof, door). Better picks make stronger blocks: dirt, wood, stone, then iron.</li>
+          <li><strong>Survive the night:</strong> two mobs attack your layers with tough questions. Pick the best defense for each.</li>
+          <li><strong>Win:</strong> if every defense holds, your base stands and you earn a building for your world. You get two tries.</li>
+        </ol>
+        <div class="btn-row"><button class="btn btn-primary" type="button" id="base-go">Spawn in a new world</button></div>
+      </section>
+
+      <section class="bs-stage" id="base-play" hidden>
+        <div class="bs-base">
+          <div class="bs-sky" id="base-sky">
+            <span class="bs-moon" aria-hidden="true">🌙</span>
+            <div class="bs-house" id="base-house" aria-label="Your base"></div>
+            <div class="bs-grass" aria-hidden="true"></div>
+          </div>
+
+          <div>
+            <p class="notice" id="base-intro"></p>
+
+            <!-- BUILD STEP -->
+            <div class="bs-stage" id="base-build">
+              <div class="bs-q">
+                <h3 id="layer-title"></h3>
+                <p id="layer-prompt"></p>
+                <div id="layer-options"></div>
+                <p class="hint bs-hint" id="layer-hint" hidden></p>
+                <div class="btn-row">
+                  <button class="btn btn-primary" type="button" id="layer-place" disabled>Place block</button>
+                  <button class="btn btn-dark" type="button" id="layer-hint-btn">Need a hint?</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- NIGHT STEP -->
+            <div class="bs-stage" id="base-night" hidden>
+              <h2 style="margin-top:0">Night falls&hellip;</h2>
+              <div id="raid-list"></div>
+              <div class="btn-row">
+                <button class="btn btn-primary" type="button" id="raid-submit">Defend my base</button>
+              </div>
+            </div>
+
+            <!-- RESULT -->
+            <div class="bs-stage panel" id="base-result" hidden aria-live="polite">
+              <h2 id="base-res-title"></h2>
+              <p id="base-res-text"></p>
+              <p class="notice" id="base-res-reward" hidden></p>
+              <p class="hint" id="base-res-inspo"></p>
+              <div class="btn-row">
+                <button class="btn btn-primary" type="button" id="base-again">Build another base</button>
+                <a class="btn btn-dark" href="/games">Back to Quests</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script>
+  window.addEventListener("load", function () {
+    if (!window.__bsReady) {
+      var e = document.getElementById("bs-error");
+      e.textContent = "The game script (public/js/brainstorm-base.js) did not load. Copy it into your public/js folder and restart npm start.";
+      e.hidden = false;
+    }
+  });
+  </script>
+<%- include('partials/footer', { scripts: ['/js/brainstorm-base.js'] }) %>

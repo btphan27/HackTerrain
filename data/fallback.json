@@ -1,138 +1,83 @@
 [
-    {
-      "topic": "teamwork",
-      "difficulty": "easy",
-      "title": "Split the Work",
-      "description": "Your team of 4 has 24 hours to build a recipe-sharing app. One member is strongest at frontend, one at backend, one at design, and one is a beginner who wants to learn. Decide who does what so nobody is idle or overloaded.",
-      "timeLimitMinutes": 10,
-      "deliverable": "A role assignment for each teammate plus 3 checkpoints (for example hour 6, 12, 20) where the team syncs.",
-      "solution": "Frontend: builds the recipe list and detail pages. Backend: sets up the API and database. Designer: creates the layout, colors, and logo first so the frontend can use them, then helps with the demo slides. Beginner: pairs with the backend person on simple endpoints and writes seed data. Checkpoints: hour 6 (API shape agreed and fake data flowing), hour 12 (frontend connected to the API), hour 20 (feature freeze, only bug fixes and demo prep). Key idea: agree on the API contract in the first hour so people can work in parallel."
-    },
-    {
-      "topic": "teamwork",
-      "difficulty": "medium",
-      "title": "The Stack Standoff",
-      "description": "Six hours in, two teammates are arguing over the tech stack. One wants React and Node, the other wants plain HTML and Python. A third teammate has said nothing and looks uncomfortable. Progress has stalled. You are the one who steps in.",
-      "timeLimitMinutes": 20,
-      "deliverable": "A short message to the team that proposes a decision process, plus the criteria you would use to choose.",
-      "solution": "Pause the argument and name the shared goal: a working demo in the remaining time. Propose criteria everyone can accept: what the team already knows, setup time, and what the demo needs. Give each person two minutes to state their case, and ask the quiet teammate directly what they are comfortable with. Choose the option that scores best on the criteria, not the one pushed hardest. Set a rule that the decision is final for the rest of the event, and give the person whose option lost a meaningful, visible task so they stay invested."
-    },
-    {
-      "topic": "teamwork",
-      "difficulty": "hard",
-      "title": "Integration Crunch",
-      "description": "It is hour 30 of a 36-hour hackathon. Three teammates built the frontend, API, and AI feature separately, and nothing connects. One teammate has not replied in 5 hours. There are 6 hours left, including time to prepare the demo.",
-      "timeLimitMinutes": 40,
-      "deliverable": "An hour-by-hour recovery plan with owners, a fallback if the missing teammate's part never arrives, and the point at which you stop adding anything new.",
-      "solution": "Hour 30-31: one person runs a quick check on each part to see what actually works, while another tries to reach the missing teammate and reads their code or branch. Hour 31-33: pick one integration lead, connect frontend to API first, then the AI feature last. If the missing part never arrives, replace it with hard-coded or mocked output so the demo flow still works. Hour 33-34: feature freeze, no new work. Hour 34-35: bug fixes on the demo path only. Hour 35-36: rehearse the demo twice and prepare a backup recording. Key idea: protect one reliable end-to-end flow over several half-working features."
-    },
-    {
-      "topic": "problem-solving",
-      "difficulty": "easy",
-      "title": "The Rate Limit Wall",
-      "description": "Your app calls a free weather API. After about 10 requests it starts returning a 429 error, and your demo is in 3 hours. Teammates keep refreshing the page and making it worse.",
-      "timeLimitMinutes": 10,
-      "deliverable": "A ranked list of at least 3 ways to fix or work around the problem, with the one you would do first.",
-      "solution": "1) Cache responses so repeat requests for the same city do not hit the API. 2) Save a set of real responses for demo cities and serve them if the API fails. 3) Read the API docs for limits and check whether a higher free tier or another key is available. 4) Add a short delay between calls and stop repeated refreshing. Do the cache and saved responses first, because they guarantee the demo works regardless of the API."
-    },
-    {
-      "topic": "problem-solving",
-      "difficulty": "medium",
-      "title": "Works on My Machine",
-      "description": "Your app runs perfectly on your laptop. After deploying, it shows a blank page and the server logs show a crash on startup. You have 4 hours before judging and you did not write the deployment config.",
-      "timeLimitMinutes": 20,
-      "deliverable": "An ordered debugging checklist with a hypothesis for each step and how you would test it.",
-      "solution": "Start with the logs and read the first error, not the last. Likely causes in order: missing environment variables (the API key or database URL was only on your laptop), a different Node version, a dependency installed locally but not listed in the package file, a hard-coded localhost address, or the wrong start command or port. Test each by comparing local and deployed settings, then fix one thing at a time and redeploy. Write down what each change did so you do not repeat steps."
-    },
-    {
-      "topic": "problem-solving",
-      "difficulty": "hard",
-      "title": "The Vanishing Data",
-      "description": "Two hours before judging, your demo data keeps disappearing. Sometimes the list is full, sometimes it is empty after a refresh. It happens more when two teammates test at the same time. The bug is intermittent and you cannot reproduce it on demand.",
-      "timeLimitMinutes": 35,
-      "deliverable": "A diagnosis plan covering at least 3 hypotheses, plus a safe fallback plan so the demo works even if you do not find the cause.",
-      "solution": "Hypotheses: 1) The server stores data in memory and restarts (the host redeploys or sleeps), wiping it. 2) Two users write at once and one write overwrites the other. 3) The app talks to two different databases (local versus deployed). 4) A cleanup or seed script runs on startup and resets data. Diagnose by adding logs with timestamps around reads, writes, and server start, and check whether the server restarts. Fallback plan: seed the demo data from a file on every start so it always appears, and avoid live editing during the demo. Fix the cause only after the demo is safe."
-    },
-    {
-      "topic": "mvp",
-      "difficulty": "easy",
-      "title": "Cut the Feature List",
-      "description": "Your team wants to build a study-buddy app with 10 features: accounts, flashcards, quizzes, a chat, a leaderboard, notifications, dark mode, file upload, AI summaries, and calendar sync. You have 24 hours.",
-      "timeLimitMinutes": 10,
-      "deliverable": "A list of the 3 features you will build, the ones you will skip, and one sentence of reasoning for each cut.",
-      "solution": "Build: flashcards, quizzes, and AI summaries. Together they form one clear story: paste notes, get a summary, then practice. Skip accounts (use a single demo user), chat, leaderboard, notifications, dark mode, file upload, and calendar sync. They are extras that do not prove the main idea and each takes hours. A good MVP shows one problem solved from start to finish, not many features partly working."
-    },
-    {
-      "topic": "mvp",
-      "difficulty": "medium",
-      "title": "One Core Loop",
-      "description": "Your team's idea is a fitness app with accounts, a social feed, an AI coach, wearable sync, and meal tracking. You have 36 hours and four people. The team cannot agree on what the product actually is.",
-      "timeLimitMinutes": 25,
-      "deliverable": "One sentence describing the core loop, a 5-step demo script, and a list of what you will fake or skip.",
-      "solution": "Core loop: a user logs a workout, and the AI coach gives one specific suggestion for the next one. Demo script: 1) open the app with a pre-made user, 2) log a workout in under 20 seconds, 3) the coach responds with a suggestion, 4) show the history with 2-3 pre-filled entries, 5) state the next step in one sentence. Fake or skip: wearable sync (use sample data), social feed, meal tracking, and real accounts. Everything left is judged on whether it supports the loop."
-    },
-    {
-      "topic": "mvp",
-      "difficulty": "hard",
-      "title": "Halfway and Behind",
-      "description": "It is hour 18 of 36. Your plan needs about 80 percent more work than the team can finish. You have 4 people, a working login page, and a half-built dashboard. The original pitch promised real-time data, AI recommendations, and mobile support.",
-      "timeLimitMinutes": 40,
-      "deliverable": "A re-scoped plan for the remaining 18 hours: what you keep, what you fake, what you drop, and how you will describe it honestly to the judges.",
-      "solution": "Keep: the dashboard with one polished view, since it already exists. Fake: real-time data (use a timed loop of sample data labeled as simulated) and the AI recommendations (use one real call with a pre-selected input if it is quick, otherwise a clearly labeled example). Drop: mobile support and any new login features. Plan: hours 18-24 finish the one view, 24-30 connect the single AI call, 30-34 polish and prepare the demo, 34-36 rehearse and record a backup. When pitching, be honest: say what is real, what is simulated, and what you would build next. Judges respect a clear, working slice more than a long list of broken features."
-    },
-    {
-      "topic": "pitching",
-      "difficulty": "easy",
-      "title": "The 30-Second Hook",
-      "description": "You built an app that turns recorded classroom lectures into short, organized notes. A judge walks up to your table and says, 'Tell me about your project.' You have 30 seconds before they move on.",
-      "timeLimitMinutes": 10,
-      "deliverable": "A written 30-second pitch (about 75 words) that covers the problem, your solution, and one concrete result.",
-      "solution": "Example: 'Students miss key points because they can't write and listen at once. We built an app that turns any recorded lecture into short, organized notes in under a minute. In testing, a 50-minute lecture became a one-page summary with the main concepts and questions to review. Want to see it?' It names the problem, states the solution simply, gives one specific number, and ends with an invitation to see the demo."
-    },
-    {
-      "topic": "pitching",
-      "difficulty": "medium",
-      "title": "Judges Who Skim",
-      "description": "You have a 3-minute slot to pitch a project to judges who have already seen 20 teams today. Your project is a tool that helps small restaurants cut food waste. You also want to qualify for a sustainability sponsor prize.",
-      "timeLimitMinutes": 25,
-      "deliverable": "A timestamped outline of the 3 minutes, what you would cut, and how you address the sponsor prize.",
-      "solution": "0:00-0:20 Hook with a striking fact or short story about food waste. 0:20-0:50 The problem and who has it. 0:50-2:00 Live demo of the single main flow. 2:00-2:30 Impact: a number or a clear example, tied explicitly to the sponsor's sustainability goal. 2:30-3:00 What is next and a clear closing line. Cut: technical details of the architecture, a long team introduction, and secondary features. Mention the sponsor prize once, by name, in the impact section. Keep one backup slide with technical detail for questions."
-    },
-    {
-      "topic": "pitching",
-      "difficulty": "hard",
-      "title": "The Demo Fails Live",
-      "description": "Forty seconds into your 3-minute pitch, the live demo freezes. The Wi-Fi is down and the judges are watching. Your teammate looks at you. You have no backup slides open.",
-      "timeLimitMinutes": 30,
-      "deliverable": "A recovery script covering what you say in the first 10 seconds, how you continue, and how you finish. Include the preparation you should have done beforehand.",
-      "solution": "First 10 seconds: stay calm and say, 'The Wi-Fi has let us down. Let me show you what it does.' Do not apologize repeatedly or blame anyone. Continue: switch to a prepared backup, such as a recorded demo video saved on the laptop, or screenshots of each step, and narrate over them. Give the judges the outcome in words: the problem, what the app did, the result. Finish by offering a live demo after the pitch once the connection is back. Preparation: record a 60-second demo video, save screenshots offline, test the setup on the venue network beforehand, and keep a phone hotspot ready."
-    },
-    {
-      "topic": "project-brainstorming",
-      "difficulty": "easy",
-      "title": "Ten Ideas in Ten Minutes",
-      "description": "The hackathon theme is 'making campus life easier.' Your team of 3 has no idea yet and 24 hours to build something. Nobody wants to speak first.",
-      "timeLimitMinutes": 10,
-      "deliverable": "A list of 10 project ideas and the 1 you would pick, with a short reason.",
-      "solution": "Method: set a 5-minute timer, have everyone write ideas silently, then share. Start from real annoyances: finding open study rooms, splitting group project work, dining hall wait times, finding people for intramural sports, lost and found. Pick one using three questions: can it be built in 24 hours, can we demo it clearly, and does it solve a problem we have actually felt. Example pick: a live map of open study rooms, because it is simple to build with sample data and easy to demo."
-    },
-    {
-      "topic": "project-brainstorming",
-      "difficulty": "medium",
-      "title": "Pick the Winner",
-      "description": "Your team has narrowed to 5 ideas: a language-exchange matcher, a carbon footprint tracker, an AI resume reviewer, a public transit delay predictor, and a meal-planning assistant. You have 30 minutes to choose, and every teammate has a different favorite.",
-      "timeLimitMinutes": 25,
-      "deliverable": "A scoring rubric with at least 4 criteria and weights, a scored comparison of the 5 ideas, and your final pick.",
-      "solution": "Criteria and weights: feasibility in the time available (35%), clarity of the demo (25%), usefulness or impact (25%), and fit with the available data or APIs (15%). Score each idea from 1 to 5 on each criterion independently, then average the team's scores to reduce one loud opinion. Likely results: the resume reviewer and meal planner score high on feasibility and demo clarity, the transit predictor scores lower on feasibility because real-time data is hard. Pick the highest weighted total, and agree beforehand that everyone supports the result."
-    },
-    {
-      "topic": "project-brainstorming",
-      "difficulty": "hard",
-      "title": "Pivot Under Pressure",
-      "description": "It is hour 10 of 36. The API your whole idea depends on just revoked your access, and you cannot get it back. You have a working login system, a database, and a clean frontend. The team is frustrated and wants to start from scratch.",
-      "timeLimitMinutes": 35,
-      "deliverable": "Three pivot options that reuse what you already built, your recommended choice, and a message to calm and align the team.",
-      "solution": "Reuse inventory: login, database, frontend shell. Options: 1) Replace the API with a different source that gives similar data, or with a small dataset you collect yourself, keeping the same product. 2) Shift the product so user-generated content replaces the external data, which uses your login and database directly. 3) Turn the same screens into a tool for a related problem that needs no external data. Recommend the option with the least rework that still supports a clear demo, usually option 1 or 2. Message to the team: 'We lost one piece, not the project. Here is what we already have, here is the new plan, and here is who does what in the next hour.' Set a 15-minute limit on the decision so the team does not lose more time."
-    }
-  ]
-
+  {
+    "topic": "teamwork",
+    "difficulty": "easy",
+    "title": "Split the Work",
+    "description": "Your team of 4 has 24 hours to build a recipe-sharing app. One member is strongest at frontend, one at backend, one at design, and one is a beginner who wants to learn. Decide who does what so nobody is idle or overloaded.",
+    "timeLimitMinutes": 10,
+    "deliverable": "A role assignment for each teammate plus 3 checkpoints (for example hour 6, 12, 20) where the team syncs.",
+    "solution": "Frontend: builds the recipe list and detail pages. Backend: sets up the API and database. Designer: creates the layout, colors, and logo first so the frontend can use them, then helps with the demo slides. Beginner: pairs with the backend person on simple endpoints and writes seed data. Checkpoints: hour 6 (API shape agreed and fake data flowing), hour 12 (frontend connected to the API), hour 20 (feature freeze, only bug fixes and demo prep). Key idea: agree on the API contract in the first hour so people can work in parallel."
+  },
+  {
+    "topic": "teamwork",
+    "difficulty": "medium",
+    "title": "The Stack Standoff",
+    "description": "Six hours in, two teammates are arguing over the tech stack. One wants React and Node, the other wants plain HTML and Python. A third teammate has said nothing and looks uncomfortable. Progress has stalled. You are the one who steps in.",
+    "timeLimitMinutes": 20,
+    "deliverable": "A short message to the team that proposes a decision process, plus the criteria you would use to choose.",
+    "solution": "Pause the argument and name the shared goal: a working demo in the remaining time. Propose criteria everyone can accept: what the team already knows, setup time, and what the demo needs. Give each person two minutes to state their case, and ask the quiet teammate directly what they are comfortable with. Choose the option that scores best on the criteria, not the one pushed hardest. Set a rule that the decision is final for the rest of the event, and give the person whose option lost a meaningful, visible task so they stay invested."
+  },
+  {
+    "topic": "teamwork",
+    "difficulty": "hard",
+    "title": "Integration Crunch",
+    "description": "It is hour 30 of a 36-hour hackathon. Three teammates built the frontend, API, and AI feature separately, and nothing connects. One teammate has not replied in 5 hours. There are 6 hours left, including time to prepare the demo.",
+    "timeLimitMinutes": 40,
+    "deliverable": "An hour-by-hour recovery plan with owners, a fallback if the missing teammate's part never arrives, and the point at which you stop adding anything new.",
+    "solution": "Hour 30-31: one person runs a quick check on each part to see what actually works, while another tries to reach the missing teammate and reads their code or branch. Hour 31-33: pick one integration lead, connect frontend to API first, then the AI feature last. If the missing part never arrives, replace it with hard-coded or mocked output so the demo flow still works. Hour 33-34: feature freeze, no new work. Hour 34-35: bug fixes on the demo path only. Hour 35-36: rehearse the demo twice and prepare a backup recording. Key idea: protect one reliable end-to-end flow over several half-working features."
+  },
+  {
+    "topic": "problem-solving",
+    "difficulty": "easy",
+    "title": "The Rate Limit Wall",
+    "description": "Your app calls a free weather API. After about 10 requests it starts returning a 429 error, and your demo is in 3 hours. Teammates keep refreshing the page and making it worse.",
+    "timeLimitMinutes": 10,
+    "deliverable": "A ranked list of at least 3 ways to fix or work around the problem, with the one you would do first.",
+    "solution": "1) Cache responses so repeat requests for the same city do not hit the API. 2) Save a set of real responses for demo cities and serve them if the API fails. 3) Read the API docs for limits and check whether a higher free tier or another key is available. 4) Add a short delay between calls and stop repeated refreshing. Do the cache and saved responses first, because they guarantee the demo works regardless of the API."
+  },
+  {
+    "topic": "problem-solving",
+    "difficulty": "medium",
+    "title": "Works on My Machine",
+    "description": "Your app runs perfectly on your laptop. After deploying, it shows a blank page and the server logs show a crash on startup. You have 4 hours before judging and you did not write the deployment config.",
+    "timeLimitMinutes": 20,
+    "deliverable": "An ordered debugging checklist with a hypothesis for each step and how you would test it.",
+    "solution": "Start with the logs and read the first error, not the last. Likely causes in order: missing environment variables (the API key or database URL was only on your laptop), a different Node version, a dependency installed locally but not listed in the package file, a hard-coded localhost address, or the wrong start command or port. Test each by comparing local and deployed settings, then fix one thing at a time and redeploy. Write down what each change did so you do not repeat steps."
+  },
+  {
+    "topic": "problem-solving",
+    "difficulty": "hard",
+    "title": "The Vanishing Data",
+    "description": "Two hours before judging, your demo data keeps disappearing. Sometimes the list is full, sometimes it is empty after a refresh. It happens more when two teammates test at the same time. The bug is intermittent and you cannot reproduce it on demand.",
+    "timeLimitMinutes": 35,
+    "deliverable": "A diagnosis plan covering at least 3 hypotheses, plus a safe fallback plan so the demo works even if you do not find the cause.",
+    "solution": "Hypotheses: 1) The server stores data in memory and restarts (the host redeploys or sleeps), wiping it. 2) Two users write at once and one write overwrites the other. 3) The app talks to two different databases (local versus deployed). 4) A cleanup or seed script runs on startup and resets data. Diagnose by adding logs with timestamps around reads, writes, and server start, and check whether the server restarts. Fallback plan: seed the demo data from a file on every start so it always appears, and avoid live editing during the demo. Fix the cause only after the demo is safe."
+  },
+  {
+    "topic": "pitching",
+    "difficulty": "easy",
+    "title": "The 30-Second Hook",
+    "description": "You built an app that turns recorded classroom lectures into short, organized notes. A judge walks up to your table and says, 'Tell me about your project.' You have 30 seconds before they move on.",
+    "timeLimitMinutes": 10,
+    "deliverable": "A written 30-second pitch (about 75 words) that covers the problem, your solution, and one concrete result.",
+    "solution": "Example: 'Students miss key points because they can't write and listen at once. We built an app that turns any recorded lecture into short, organized notes in under a minute. In testing, a 50-minute lecture became a one-page summary with the main concepts and questions to review. Want to see it?' It names the problem, states the solution simply, gives one specific number, and ends with an invitation to see the demo."
+  },
+  {
+    "topic": "pitching",
+    "difficulty": "medium",
+    "title": "Judges Who Skim",
+    "description": "You have a 3-minute slot to pitch a project to judges who have already seen 20 teams today. Your project is a tool that helps small restaurants cut food waste. You also want to qualify for a sustainability sponsor prize.",
+    "timeLimitMinutes": 25,
+    "deliverable": "A timestamped outline of the 3 minutes, what you would cut, and how you address the sponsor prize.",
+    "solution": "0:00-0:20 Hook with a striking fact or short story about food waste. 0:20-0:50 The problem and who has it. 0:50-2:00 Live demo of the single main flow. 2:00-2:30 Impact: a number or a clear example, tied explicitly to the sponsor's sustainability goal. 2:30-3:00 What is next and a clear closing line. Cut: technical details of the architecture, a long team introduction, and secondary features. Mention the sponsor prize once, by name, in the impact section. Keep one backup slide with technical detail for questions."
+  },
+  {
+    "topic": "pitching",
+    "difficulty": "hard",
+    "title": "The Demo Fails Live",
+    "description": "Forty seconds into your 3-minute pitch, the live demo freezes. The Wi-Fi is down and the judges are watching. Your teammate looks at you. You have no backup slides open.",
+    "timeLimitMinutes": 30,
+    "deliverable": "A recovery script covering what you say in the first 10 seconds, how you continue, and how you finish. Include the preparation you should have done beforehand.",
+    "solution": "First 10 seconds: stay calm and say, 'The Wi-Fi has let us down. Let me show you what it does.' Do not apologize repeatedly or blame anyone. Continue: switch to a prepared backup, such as a recorded demo video saved on the laptop, or screenshots of each step, and narrate over them. Give the judges the outcome in words: the problem, what the app did, the result. Finish by offering a live demo after the pitch once the connection is back. Preparation: record a 60-second demo video, save screenshots offline, test the setup on the venue network beforehand, and keep a phone hotspot ready."
+  }
+]
