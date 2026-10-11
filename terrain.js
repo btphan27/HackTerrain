@@ -27,6 +27,11 @@ CREATE TABLE IF NOT EXISTS terrain_items (
 );
 CREATE INDEX IF NOT EXISTS idx_terrain_sub ON terrain_items (sub);
 `);
+// The land is a free-form scene now: px/py are the item's position in percent (0-100).
+// (The old x/y grid columns are no longer used.)
+for (const col of ["px REAL", "py REAL"]) {
+  try { db.exec("ALTER TABLE terrain_items ADD COLUMN " + col); } catch (e) { /* already there */ }
+}
 
 // ---------- What can be won ----------
 // `type` is the stable id the theme/art uses (e.g. a Minecraft texture per type). `emoji` is a placeholder look.
@@ -104,7 +109,8 @@ const decorate = (row) => {
   const meta = BY_TYPE[row.type] || { name: row.type, emoji: "❓", rarity: "common" };
   return {
     id: row.id, type: row.type, kind: row.kind, difficulty: row.difficulty,
-    name: meta.name, emoji: meta.emoji, rarity: meta.rarity, x: row.x, y: row.y,
+    name: meta.name, emoji: meta.emoji, rarity: meta.rarity,
+    x: row.px === undefined ? null : row.px, y: row.py === undefined ? null : row.py,
   };
 };
 
@@ -121,20 +127,6 @@ const totalItems = (sub) => db.prepare("SELECT COUNT(*) AS n FROM terrain_items 
 const landSizeFor = (count) => Math.min(MAX_LAND, BASE_LAND + Math.floor(count / REWARDS_PER_EXPANSION));
 const landSize = (sub) => landSizeFor(totalItems(sub));
 
-// Put a new item on a random empty square so the land visibly fills up. If the land is full it stays in the inventory.
-function autoPlace(sub, id) {
-  const size = landSize(sub);
-  const taken = new Set(
-    db.prepare("SELECT x, y FROM terrain_items WHERE sub = ? AND x IS NOT NULL").all(sub).map((r) => r.x + "," + r.y)
-  );
-  const free = [];
-  for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) if (!taken.has(x + "," + y)) free.push([x, y]);
-  if (!free.length) return false;
-  const [x, y] = free[crypto.randomInt(free.length)];
-  db.prepare("UPDATE terrain_items SET x = ?, y = ? WHERE id = ?").run(x, y, id);
-  return true;
-}
-
 // ---------- THE FUNCTION THE CHALLENGE CODE CALLS ----------
 function grantReward(sub, difficulty, sourceId) {
   const diff = normalizeDifficulty(difficulty);
@@ -148,7 +140,7 @@ function grantReward(sub, difficulty, sourceId) {
   // Same challenge twice = same reward, never a second one (and no re-rolling)
   const existing = db.prepare("SELECT * FROM terrain_items WHERE sub = ? AND source_id = ?").get(sub, source);
   if (existing) {
-    return { isNew: false, reward: decorate(existing), placed: existing.x !== null, landSize: landSize(sub), expanded: false };
+    return { isNew: false, reward: decorate(existing), placed: existing.px != null, landSize: landSize(sub), expanded: false };
   }
 
   const before = landSize(sub);
@@ -156,7 +148,7 @@ function grantReward(sub, difficulty, sourceId) {
   const info = db
     .prepare("INSERT INTO terrain_items (sub, type, kind, difficulty, source_id) VALUES (?, ?, ?, ?, ?)")
     .run(sub, pick.type, tier.kind, diff, source);
-  const placed = autoPlace(sub, info.lastInsertRowid);
+  const placed = false; // new items wait in the inventory until the player drops them on the land
   const row = db.prepare("SELECT * FROM terrain_items WHERE id = ?").get(info.lastInsertRowid);
   const after = landSize(sub);
   return { isNew: true, reward: decorate(row), placed, landSize: after, expanded: after > before };
@@ -189,21 +181,21 @@ const getSummary = (sub) => {
 };
 
 // ---------- Customising ----------
+// x and y are percentages of the scene (0 = left/top, 100 = right/bottom). The item stands with its feet at that point.
+const MIN_Y = 30; // keep things out of the sky
 function place(sub, id, x, y) {
   const item = db.prepare("SELECT id FROM terrain_items WHERE id = ? AND sub = ?").get(id, sub);
   if (!item) return { status: 404, error: "Item not found." };
-  const size = landSize(sub);
-  if (![x, y].every(Number.isInteger) || x < 0 || y < 0 || x >= size || y >= size) {
+  if (![x, y].every(Number.isFinite) || x < 0 || x > 100 || y < MIN_Y || y > 100) {
     return { status: 400, error: "That spot is outside your land." };
   }
-  const occupied = db.prepare("SELECT id FROM terrain_items WHERE sub = ? AND x = ? AND y = ? AND id != ?").get(sub, x, y, id);
-  if (occupied) return { status: 409, error: "Something is already there." };
-  db.prepare("UPDATE terrain_items SET x = ?, y = ? WHERE id = ?").run(x, y, id);
+  db.prepare("UPDATE terrain_items SET px = ?, py = ?, x = NULL, y = NULL WHERE id = ?")
+    .run(Math.round(x * 10) / 10, Math.round(y * 10) / 10, id);
   return { ok: true };
 }
 
 function remove(sub, id) {
-  const r = db.prepare("UPDATE terrain_items SET x = NULL, y = NULL WHERE id = ? AND sub = ?").run(id, sub);
+  const r = db.prepare("UPDATE terrain_items SET px = NULL, py = NULL, x = NULL, y = NULL WHERE id = ? AND sub = ?").run(id, sub);
   return r.changes ? { ok: true } : { status: 404, error: "Item not found." };
 }
 

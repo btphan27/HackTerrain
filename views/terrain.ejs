@@ -3,7 +3,7 @@
     <div class="container">
       <div class="page-title">
         <h1><%= isOwner ? "Your terrain" : "@" + owner + "'s terrain" %></h1>
-        <p><%= isOwner ? "Complete challenges to earn plants, animals, and buildings. Click an item to move it." : "Look at what they've built." %></p>
+        <p><%= isOwner ? "Finish quests to earn plants, animals, and buildings, then drag them onto your land to build your own world." : "Look at what they've built." %></p>
       </div>
       <%- include('partials/terrain-widget', {
             api: isOwner ? '/api/terrain' : '/api/terrain/u/' + owner,

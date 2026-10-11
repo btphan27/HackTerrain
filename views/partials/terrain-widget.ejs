@@ -1,26 +1,41 @@
-<%# The terrain. Needs: api (where to load it from), editable (true/false), dev (show test buttons).
-    The theme person can restyle everything here. Hook into: .tr-cell[data-type][data-kind], .tr-inv-item[data-type]. %>
+<%# The terrain: a blank pixel landscape. Earned items wait in the inventory; drag them onto the land (or click an item, then click the land).
+    Needs: api (where to load it from), editable (true/false), dev (show test buttons). %>
 <div id="terrain-root" data-api="<%= api %>" data-editable="<%= editable ? 'true' : 'false' %>" data-dev="<%= dev ? 'true' : 'false' %>">
   <p id="tr-status">Loading your land...</p>
   <p id="tr-msg" aria-live="polite"></p>
-  <div id="tr-grid" class="tr-grid"></div>
-  <div id="tr-actions"></div>
-  <h4 id="tr-inv-title" hidden>Inventory (click an item, then click an empty square)</h4>
-  <div id="tr-inv" class="tr-inv"></div>
+
+  <div id="tr-scene" class="tr-scene" aria-label="Your terrain">
+    <div id="tr-items" class="tr-items"></div>
+    <p id="tr-empty" class="tr-empty" hidden></p>
+  </div>
+  <div id="tr-actions" class="tr-actions"></div>
+
+  <section id="tr-bag" class="tr-bag"<%- editable ? '' : ' hidden' %>>
+    <h2>Inventory</h2>
+    <p class="hint" id="tr-bag-hint">Drag an item onto your land, or click it and then click where it should go. Drag an item back here to put it away.</p>
+    <div id="tr-inv" class="tr-inv"></div>
+  </section>
+
   <% if (dev && editable) { %>
-    <fieldset id="tr-dev"><legend>Testing only: pretend a challenge was completed</legend>
-      <button class="btn btn-dark" type="button" data-dev="easy">Easy challenge</button>
-      <button class="btn btn-dark" type="button" data-dev="medium">Medium challenge</button>
-      <button class="btn btn-dark" type="button" data-dev="hard">Hard challenge</button>
+    <fieldset id="tr-dev"><legend>Testing only: pretend a quest was completed</legend>
+      <button class="btn btn-dark" type="button" data-dev="easy">Easy quest</button>
+      <button class="btn btn-dark" type="button" data-dev="medium">Medium quest</button>
+      <button class="btn btn-dark" type="button" data-dev="hard">Hard quest</button>
     </fieldset>
   <% } %>
 </div>
 
+<script src="/js/terrain-sprites.js"></script>
 <script>
 (function () {
   var root = document.getElementById("terrain-root");
   var api = root.dataset.api;
   var editable = root.dataset.editable === "true";
+  var scene = document.getElementById("tr-scene");
+  var itemsEl = document.getElementById("tr-items");
+  var bag = document.getElementById("tr-bag");
+  var UNITS = 64;      // the scene is 64 pixels wide; sprites are drawn in the same pixels
+  var MIN_Y = 40;      // percent from the top: nothing is dropped up in the sky
   var state = null;
   var selected = null;
 
@@ -39,78 +54,191 @@
       return r.json().then(function (data) { if (!r.ok) throw new Error(data.error || "Something went wrong"); return data; });
     });
   }
-
   function act(action, body) {
-    return call("POST", "/api/terrain/" + action, body).then(function (res) { state = res.terrain; say(""); render(); })
-      .catch(function (e) { say(e.message); });
+    return call("POST", "/api/terrain/" + action, body)
+      .then(function (res) { state = res.terrain; say(""); render(); })
+      .catch(function (e) { say(e.message); render(); });
   }
-
   function find(id) {
     for (var i = 0; i < state.items.length; i++) if (state.items[i].id === id) return state.items[i];
     return null;
   }
 
+  // The picture for an item: pixel sprite, or the emoji if there is no sprite yet
+  function art(it, host) {
+    var S = window.TerrainSprites;
+    if (S && S.has(it.type)) { host.innerHTML = S.svg(it.type); return S.size(it.type); }
+    host.textContent = it.emoji;
+    return { w: 8, h: 8 };
+  }
+
   function render() {
-    var t = state;
-    var c = t.counts;
-    var status = "Land " + t.landSize + "x" + t.landSize + " | " + c.nature + " nature, " + c.animal + " animals, " + c.building + " buildings";
-    status += t.nextExpansionIn ? " | land grows after " + t.nextExpansionIn + " more reward" + (t.nextExpansionIn > 1 ? "s" : "") : " | land is fully grown";
-    document.getElementById("tr-status").textContent = status;
+    var t = state, c = t.counts;
+    var placed = t.placed.length, inBag = t.inventory.length;
+    document.getElementById("tr-status").textContent =
+      c.total + " item" + (c.total === 1 ? "" : "s") + " earned | " + c.nature + " nature, " + c.animal + " animals, " + c.building + " buildings" +
+      (editable ? " | " + placed + " on your land, " + inBag + " in your inventory" : "");
 
-    var grid = document.getElementById("tr-grid");
-    grid.innerHTML = "";
-    grid.className = "tr-grid" + (editable ? "" : " tr-readonly");
-    grid.style.gridTemplateColumns = "repeat(" + t.landSize + ", 44px)";
-    var at = {};
-    t.placed.forEach(function (i) { at[i.x + "," + i.y] = i; });
+    scene.className = "tr-scene" + (editable ? " is-editable" : "") + (selected !== null ? " has-selection" : "");
 
-    for (var y = 0; y < t.landSize; y++) {
-      for (var x = 0; x < t.landSize; x++) {
-        (function (x, y) {
-          var it = at[x + "," + y];
-          var cell = el("button", "tr-cell");
-          cell.type = "button";
-          if (it) {
-            cell.classList.add("has-item");
-            cell.dataset.type = it.type;
-            cell.dataset.kind = it.kind;
-            cell.textContent = it.emoji;
-            cell.title = it.name + " (" + it.rarity + ")";
-            if (selected === it.id) cell.classList.add("selected");
-          } else {
-            cell.setAttribute("aria-label", "empty square");
-          }
-          cell.addEventListener("click", function () {
-            if (!editable) return;
-            if (it) { selected = selected === it.id ? null : it.id; render(); }
-            else if (selected !== null) { var id = selected; selected = null; act("place", { id: id, x: x, y: y }); }
-          });
-          grid.appendChild(cell);
-        })(x, y);
-      }
-    }
+    // ----- items standing on the land (lower items are drawn in front) -----
+    itemsEl.innerHTML = "";
+    t.placed.slice().sort(function (a, b) { return a.y - b.y; }).forEach(function (it) {
+      var b = el("button", "tr-item");
+      b.type = "button";
+      b.dataset.id = it.id; b.dataset.type = it.type; b.dataset.kind = it.kind;
+      b.title = it.name + " (" + it.rarity + ")";
+      b.setAttribute("aria-label", it.name + (editable ? ", on your land. Press to select it." : ""));
+      var dim = art(it, b);
+      b.style.left = it.x + "%"; b.style.top = it.y + "%";
+      b.style.width = (dim.w / UNITS * 100) + "%";
+      if (selected === it.id) b.classList.add("selected");
+      itemsEl.appendChild(b);
+    });
 
+    var empty = document.getElementById("tr-empty");
+    if (!placed) {
+      empty.hidden = false;
+      empty.textContent = editable
+        ? (inBag ? "Your land is empty. Drag something from your inventory onto it!" : "Your land is empty. Finish quests to earn things to build with.")
+        : "Nothing here yet.";
+    } else { empty.hidden = true; }
+
+    // ----- actions for the selected item -----
     var actions = document.getElementById("tr-actions");
     actions.innerHTML = "";
     var sel = selected !== null ? find(selected) : null;
-    if (editable && sel && sel.x !== null) {
-      var pick = el("button", "btn btn-dark", "Pick up " + sel.name);
-      pick.type = "button";
-      pick.addEventListener("click", function () { var id = selected; act("remove", { id: id }).then(function () { selected = id; render(); }); });
-      actions.appendChild(pick);
+    if (editable && sel) {
+      var info = el("span", "tr-selected", "Selected: " + sel.name + (sel.x === null ? ". Click the land to place it." : ". Click the land to move it."));
+      actions.appendChild(info);
+      if (sel.x !== null) {
+        var back = el("button", "btn btn-dark", "Put back in inventory");
+        back.type = "button";
+        back.addEventListener("click", function () { var id = selected; selected = null; act("remove", { id: id }); });
+        actions.appendChild(back);
+      }
     }
 
+    // ----- the bag -----
     var inv = document.getElementById("tr-inv");
     inv.innerHTML = "";
-    document.getElementById("tr-inv-title").hidden = !t.inventory.length;
+    if (!inBag) {
+      inv.appendChild(el("p", "tr-bag-empty", editable && c.total === 0
+        ? "Nothing yet. Finish a quest to earn your first item."
+        : "Your inventory is empty."));
+    }
     t.inventory.forEach(function (it) {
-      var b = el("button", "tr-inv-item", it.emoji);
+      var b = el("button", "tr-bag-item");
       b.type = "button";
-      b.dataset.type = it.type;
+      b.dataset.id = it.id; b.dataset.type = it.type; b.dataset.kind = it.kind;
       b.title = it.name + " (" + it.rarity + ")";
+      b.setAttribute("aria-label", it.name + " in your bag. Press to select it.");
+      var holder = el("span", "tr-bag-art");
+      art(it, holder);
+      b.appendChild(holder);
+      b.appendChild(el("span", "tr-bag-name", it.name));
       if (selected === it.id) b.classList.add("selected");
-      b.addEventListener("click", function () { if (editable) { selected = selected === it.id ? null : it.id; render(); } });
       inv.appendChild(b);
+    });
+  }
+
+  // ---------- Drag and drop (mouse, touch and pen all work) ----------
+  var drag = null;
+
+  function sceneRect() { return scene.getBoundingClientRect(); }
+  function inside(r, x, y) { return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom; }
+
+  function toPercent(x, y) {
+    var r = sceneRect();
+    var px = (x - r.left) / r.width * 100;
+    var py = (y - r.top) / r.height * 100;
+    return { x: Math.max(2, Math.min(98, px)), y: Math.max(MIN_Y, Math.min(99, py)) };
+  }
+
+  function startDrag(e, source) {
+    if (!editable || e.button > 0) return;
+    var node = e.target.closest("[data-id]");
+    if (!node) return;
+    var it = find(Number(node.dataset.id));
+    if (!it) return;
+    drag = { id: it.id, item: it, from: source, node: node, sx: e.clientX, sy: e.clientY, moving: false, ghost: null, pid: e.pointerId };
+  }
+
+  function makeGhost() {
+    var it = drag.item;
+    var g = el("div", "tr-ghost");
+    var dim = art(it, g);
+    g.style.width = (dim.w / UNITS * sceneRect().width) + "px";
+    document.body.appendChild(g);
+    drag.ghost = g;
+    drag.node.classList.add("is-lifted");
+  }
+
+  function moveGhost(x, y) {
+    if (!drag.ghost) return;
+    drag.ghost.style.left = x + "px";
+    drag.ghost.style.top = y + "px";
+    scene.classList.toggle("is-target", inside(sceneRect(), x, y));
+    bag.classList.toggle("is-target", drag.from === "scene" && inside(bag.getBoundingClientRect(), x, y));
+  }
+
+  function endDrag(e, cancelled) {
+    var d = drag; drag = null;
+    if (!d) return;
+    scene.classList.remove("is-target"); bag.classList.remove("is-target");
+    if (d.ghost) d.ghost.remove();
+    if (d.node) d.node.classList.remove("is-lifted");
+    if (!d.moving) {                       // it was a click: select / unselect
+      selected = selected === d.id ? null : d.id;
+      render();
+      return;
+    }
+    if (cancelled) { render(); return; }
+    if (inside(sceneRect(), e.clientX, e.clientY)) {
+      var p = toPercent(e.clientX, e.clientY);
+      selected = null;
+      act("place", { id: d.id, x: p.x, y: p.y });
+    } else if (d.from === "scene" && inside(bag.getBoundingClientRect(), e.clientX, e.clientY)) {
+      selected = null;
+      act("remove", { id: d.id });
+    } else {
+      render();
+    }
+  }
+
+  document.addEventListener("pointermove", function (e) {
+    if (!drag || e.pointerId !== drag.pid) return;
+    if (!drag.moving) {
+      if (Math.abs(e.clientX - drag.sx) + Math.abs(e.clientY - drag.sy) < 6) return;
+      drag.moving = true;
+      makeGhost();
+    }
+    e.preventDefault();
+    moveGhost(e.clientX, e.clientY);
+  }, { passive: false });
+  document.addEventListener("pointerup", function (e) { if (drag && e.pointerId === drag.pid) endDrag(e, false); });
+  document.addEventListener("pointercancel", function (e) { if (drag && e.pointerId === drag.pid) endDrag(e, true); });
+
+  if (editable) {
+    itemsEl.addEventListener("pointerdown", function (e) { startDrag(e, "scene"); });
+    document.getElementById("tr-inv").addEventListener("pointerdown", function (e) { startDrag(e, "bag"); });
+    // Keyboard: Enter/Space on an item is a click; the pointer handlers above do not fire for it
+    root.addEventListener("keydown", function (e) {
+      if ((e.key === "Enter" || e.key === " ") && e.target.dataset && e.target.dataset.id && !drag) {
+        e.preventDefault();
+        var id = Number(e.target.dataset.id);
+        selected = selected === id ? null : id;
+        render();
+        var again = root.querySelector('[data-id="' + id + '"]');
+        if (again) again.focus();
+      }
+    });
+    // Click-to-place: select something, then click the land
+    scene.addEventListener("click", function (e) {
+      if (selected === null || e.target.closest(".tr-item")) return;
+      var p = toPercent(e.clientX, e.clientY);
+      var id = selected; selected = null;
+      act("place", { id: id, x: p.x, y: p.y });
     });
   }
 
@@ -126,12 +254,13 @@
       if (!d) return;
       call("POST", "/api/terrain/dev-grant", { difficulty: d }).then(function (res) {
         state = res.terrain;
-        say("You earned: " + res.reward.emoji + " " + res.reward.name + " (" + res.reward.rarity + ")" + (res.expanded ? " | your land grew!" : ""));
+        say("You earned: " + res.reward.name + " (" + res.reward.rarity + "). It is in your bag.");
         render();
       }).catch(function (err) { say(err.message); });
     });
   }
 
+  window.addEventListener("resize", function () { if (drag && drag.ghost) { drag.ghost.style.width = (TerrainSprites.size(drag.item.type).w / UNITS * sceneRect().width) + "px"; } });
   load();
 })();
 </script>

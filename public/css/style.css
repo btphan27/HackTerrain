@@ -305,13 +305,33 @@ progress { width: 100%; height: 22px; accent-color: var(--grass); }
 #hk-filters .count { align-self: center; color: var(--ink-soft); font-size: .85rem; font-weight: 700; }
 
 /* Terrain widget */
-#terrain-root .tr-grid { display: grid; gap: 2px; padding: 10px; background: var(--bedrock); border: 4px solid var(--ink); width: max-content; max-width: 100%; overflow: auto; box-shadow: 6px 6px 0 var(--stone-dark); }
-#terrain-root .tr-cell { width: 44px; height: 44px; font-size: 26px; line-height: 1; padding: 0; border: 0; background: var(--grass-tile) 0 0 / 32px, var(--grass); cursor: pointer; }
-#terrain-root .tr-cell.has-item { background-color: #b6e8ae; }
-#terrain-root .tr-cell.selected, #terrain-root .tr-inv-item.selected { outline: 3px solid var(--honey); outline-offset: -3px; }
-#terrain-root .tr-readonly .tr-cell { cursor: default; }
-#terrain-root .tr-inv { display: flex; flex-wrap: wrap; gap: 6px; margin: .5rem 0 1rem; }
-#terrain-root .tr-inv-item { font-size: 22px; padding: 4px 8px; cursor: pointer; background: var(--cream); border: 3px solid var(--ink); }
+/* The land: a pixel landscape you drop things onto */
+#terrain-root .tr-scene { position: relative; width: 100%; max-width: 960px; aspect-ratio: 2 / 1; overflow: hidden; background: url(/img/terrain-scene.svg) center / 100% 100% no-repeat, var(--sky-1); border: 4px solid var(--ink); box-shadow: 6px 6px 0 var(--stone-dark); image-rendering: pixelated; user-select: none; -webkit-user-select: none; }
+#terrain-root .tr-scene.is-target { outline: 4px dashed var(--honey); outline-offset: -8px; }
+#terrain-root .tr-scene.has-selection { cursor: crosshair; }
+#terrain-root .tr-items { position: absolute; inset: 0; }
+#terrain-root .tr-item { position: absolute; display: block; padding: 0; border: 0; background: none; transform: translate(-50%, -100%); cursor: default; touch-action: none; line-height: 0; font-size: 2rem; }
+#terrain-root .is-editable .tr-item { cursor: grab; }
+#terrain-root .tr-item svg, #terrain-root .tr-ghost svg, #terrain-root .tr-bag-art svg { display: block; width: 100%; height: auto; }
+#terrain-root .tr-item.selected { outline: 3px dashed var(--ink); outline-offset: 3px; }
+#terrain-root .tr-item.is-lifted { opacity: .25; }
+#terrain-root .tr-item:focus-visible, #terrain-root .tr-bag-item:focus-visible { outline: 3px solid var(--pink-dark); outline-offset: 3px; }
+#terrain-root .tr-empty { position: absolute; left: 50%; top: 45%; transform: translateX(-50%); margin: 0; padding: .5rem 1rem; background: rgba(255,255,255,.85); border: 3px solid var(--ink); font-weight: 800; text-align: center; max-width: 90%; }
+.tr-ghost { position: fixed; z-index: 1000; pointer-events: none; transform: translate(-50%, -100%); line-height: 0; filter: drop-shadow(4px 4px 0 rgba(75,58,104,.25)); }
+#terrain-root .tr-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; margin: .75rem 0; min-height: 3rem; }
+#terrain-root .tr-selected { font-weight: 800; }
+#terrain-root .tr-bag { margin-top: 1.25rem; max-width: 960px; padding: 1rem 1.25rem; background: var(--plank-tile) 0 0 / 64px; border: 4px solid var(--wood); box-shadow: 5px 5px 0 var(--stone-dark); }
+#terrain-root .tr-bag.is-target { outline: 4px dashed var(--honey); outline-offset: 2px; }
+#terrain-root .tr-bag h2 { margin: 0 0 .25rem; font-size: 1.35rem; }
+#terrain-root .tr-bag .hint { margin: 0 0 .75rem; color: var(--ink); }
+#terrain-root .tr-inv { display: flex; flex-wrap: wrap; gap: .75rem; min-height: 4rem; }
+#terrain-root .tr-bag-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: .25rem; width: 96px; min-height: 96px; padding: .5rem .35rem .35rem; background: var(--cream); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--stone-dark); cursor: grab; touch-action: none; font: inherit; color: var(--ink); }
+#terrain-root .tr-bag-item:hover { background: var(--honey); }
+#terrain-root .tr-bag-item.selected { background: var(--honey); outline: 3px solid var(--ink); outline-offset: 2px; }
+#terrain-root .tr-bag-item.is-lifted { opacity: .35; }
+#terrain-root .tr-bag-art { display: block; width: 56px; line-height: 0; font-size: 2rem; }
+#terrain-root .tr-bag-name { font-size: .75rem; font-weight: 800; line-height: 1.1; text-align: center; }
+#terrain-root .tr-bag-empty { margin: 0; font-weight: 700; }
 #terrain-root #tr-status { font-weight: 800; }
 #terrain-root #tr-msg { min-height: 1.5rem; font-weight: 800; color: var(--ink-soft); }
 #terrain-root #tr-actions { margin: .75rem 0; }
